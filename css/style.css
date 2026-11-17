@@ -1022,3 +1022,56 @@ a { text-decoration: none; color: inherit; }
 
   .food-cards { grid-template-columns: 1fr; }
 }
+
+/* ================= PHONE: simple, stable, compact ================= */
+@media (max-width: 760px) {
+  html { scroll-behavior: auto; overflow-x: clip; }
+  body { overflow-x: clip; min-height: 0; }
+
+  /* hero: normal flow, compact */
+  .hero { min-height: 0; padding-bottom: 24px; }
+  .hero-grid { padding-top: 84px; gap: 8px; }
+  .hero-visual { min-height: 0; margin-bottom: 0; }
+  .hero-img { width: min(230px, 56vw); }
+  .glow-burst, .web-line, .web-corner { display: none; }
+  .hero-footer { display: none; }
+
+  /* sports: no sticky / fixed height / inner scrollbars */
+  .sports {
+    position: relative;
+    height: auto;
+    overflow: hidden;
+    padding: 56px 16px 36px;
+  }
+  .sports-inner { height: auto; }
+  .sport-panels { flex: none; }
+  .sport-block { height: auto; overflow: visible; }
+  .sport-tabs { gap: 6px; margin-bottom: 14px; }
+  .sport-tab { padding: 7px 12px; font-size: 0.72rem; }
+  .fixture-list { --photo-h: 64px; gap: 44px; margin-top: 36px; }
+  .fixture { gap: 8px; }
+  .team-card { max-width: 150px; }
+  .team-card:hover { transform: none; }
+
+  /* food: plain section, no pinned scene, no Iron Man, no blur */
+  .fly-transition { height: auto; }
+  .fly-sticky {
+    position: relative;
+    height: auto;
+    overflow: hidden;
+    padding: 48px 0 56px;
+  }
+  .fly-ironman, .fly-flash, .fly-glow { display: none; }
+  .fly-bg { filter: none !important; transform: none !important; will-change: auto; }
+  .fly-video-overlay { background: rgba(0,0,0,0.6); }
+  .food-reveal {
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+    padding: 0 16px;
+    will-change: auto;
+  }
+  .food-sub { margin-bottom: 18px; }
+  .food-cards { gap: 12px; }
+  .food-card { padding: 16px; }
+}

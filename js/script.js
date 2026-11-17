@@ -79,7 +79,9 @@ const flyFlash = document.getElementById('flyFlash');
 const flyBg = document.getElementById('flyBg');
 const flyVideo = document.getElementById('flyVideo');
 
-if (flyIronman && foodReveal && window.gsap && window.ScrollTrigger) {
+const isPhone = window.matchMedia('(max-width: 760px)').matches;
+
+if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
 
   // anchor Iron Man (and his trail ghost) on their own center
@@ -161,7 +163,7 @@ if (flyIronman && foodReveal && window.gsap && window.ScrollTrigger) {
 }
 
 // ===== Food video: play, then pause 3s on each loop before replaying =====
-if (flyVideo) {
+if (flyVideo && !isPhone) {
   flyVideo.play().catch(() => {});
 
   flyVideo.addEventListener('ended', () => {
