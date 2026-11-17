@@ -163,7 +163,7 @@ if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger)
 }
 
 // ===== Food video: play, then pause 3s on each loop before replaying =====
-if (flyVideo && !isPhone) {
+if (flyVideo) {
   flyVideo.play().catch(() => {});
 
   flyVideo.addEventListener('ended', () => {

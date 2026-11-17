@@ -1025,8 +1025,9 @@ a { text-decoration: none; color: inherit; }
 
 /* ================= PHONE: simple, stable, compact ================= */
 @media (max-width: 760px) {
-  html { scroll-behavior: auto; overflow-x: clip; }
-  body { overflow-x: clip; min-height: 0; }
+  html { scroll-behavior: auto; overflow-x: hidden; overflow-x: clip; max-width: 100%; overscroll-behavior-x: none; }
+  body { overflow-x: hidden; overflow-x: clip; max-width: 100%; min-height: 0; position: relative; }
+  .fly-bg, .fly-video { max-width: 100%; }
 
   /* hero: normal flow, compact */
   .hero { min-height: 0; padding-bottom: 24px; }
