@@ -1063,7 +1063,13 @@ a { text-decoration: none; color: inherit; }
     padding: 48px 0 56px;
   }
   .fly-ironman, .fly-flash, .fly-glow { display: none; }
+  /* constant, non-animated blur on the video; scaled up so blurred edges stay hidden */
   .fly-bg { filter: none !important; transform: none !important; will-change: auto; }
+  .fly-video {
+    filter: blur(8px);
+    -webkit-filter: blur(8px);
+    transform: scale(1.12) translateZ(0);
+  }
   .fly-video-overlay { background: rgba(0,0,0,0.6); }
   .food-reveal {
     transform: none !important;
