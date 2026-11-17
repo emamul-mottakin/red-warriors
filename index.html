@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Warriors &mdash; Annual Team Outing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="noise-overlay"></div>
+<div class="vignette"></div>
+
+<!-- ===== NAV ===== -->
+<header class="navbar" id="navbar">
+  <div class="nav-inner">
+    <a href="#hero" class="brand">
+      <span class="brand-mark">
+        <img src="assets/images/red-warriors-logo.png" alt="Red Warriors crest" class="brand-logo">
+      </span>
+      <span class="brand-text">RED<span>WARRIORS</span></span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#hero" class="active">Home</a>
+      <a href="#sports">Sports</a>
+      <a href="#food">Food</a>
+      <a href="#itinerary">Itinerary</a>
+      <a href="#team">Squad</a>
+      <a href="#disclaimer">Rules</a>
+    </nav>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+
+  <!-- background texture layers -->
+  <div class="hero-bg">
+    <div class="halftone halftone--a"></div>
+    <div class="halftone halftone--b"></div>
+    <div class="beam"></div>
+    <svg class="web-corner web-corner--tl" viewBox="0 0 400 400" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="1" fill="none" opacity="0.5">
+        <path d="M0 0 L400 400"/>
+        <path d="M0 80 L320 400"/>
+        <path d="M0 160 L240 400"/>
+        <path d="M0 240 L160 400"/>
+        <path d="M0 320 L80 400"/>
+        <path d="M80 0 L400 320"/>
+        <path d="M160 0 L400 240"/>
+        <path d="M240 0 L400 160"/>
+        <path d="M320 0 L400 80"/>
+        <path d="M0 0 Q 40 40 0 90"/>
+        <path d="M20 0 Q 70 65 10 150"/>
+        <path d="M45 0 Q 110 100 25 220"/>
+        <path d="M75 0 Q 150 140 45 300"/>
+        <path d="M0 20 Q 65 70 150 10"/>
+        <path d="M0 45 Q 100 110 220 25"/>
+        <path d="M0 75 Q 140 150 300 45"/>
+      </g>
+    </svg>
+  </div>
+
+  <div class="hero-grid">
+    <div class="hero-content">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Red Warriors &bull; Monthly Outing 22 November 2026</p>
+
+      <h1 class="hero-heading">
+        <span class="line">From passion</span>
+        <span class="line">to <span class="pop">greatness</span></span>
+      </h1>
+
+      <p class="hero-copy">We&rsquo;re not just a team &mdash; we&rsquo;re a whole mood. Creative minds, game-time energy, foodies with flavor, and planners with purpose. From setting the vibe to serving the snacks, we bring <span class="fire">&#128293;</span> to every event. We show up. We show out. And we make it unforgettable.</p>
+
+      <div class="hero-actions">
+        <a href="#itinerary" class="btn btn-primary">
+          <span>See The Itinerary</span>
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M5 12h12.17l-4.88-4.88L13.71 5l8 8-8 8-1.42-1.41 4.88-4.88H5z"/></svg>
+        </a>
+        <a href="#team" class="btn btn-ghost">Meet The Squad</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="glow-burst"></div>
+      <svg class="web-line" viewBox="0 0 600 700" preserveAspectRatio="none" aria-hidden="true">
+        <path id="webPath" d="M600 40 C 430 120, 380 260, 470 360 C 540 440, 430 520, 330 560" />
+      </svg>
+      <div class="hero-img-wrap" id="heroImgWrap">
+        <img src="assets/images/spiderman-hero.png" alt="Spider-Man leaping" class="hero-img" id="heroImg">
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-footer">
+    <div class="scroll-cue">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 16.5 4 8.5 5.4 7.1 12 13.7 18.6 7.1 20 8.5z"/></svg>
+    </div>
+    <span class="corner-tag">RED &bull; WARRIORS &bull; 2026</span>
+  </div>
+</section>
+
+<!-- ===== SPORTS ===== -->
+<section class="sports" id="sports">
+  <div class="sports-inner">
+
+    <header class="sports-head">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Choose Your Fighter</p>
+      <h2 class="sports-title">The Arena</h2>
+      <p class="sports-sub">Four teams. Here's who's throwing down against who.</p>
+    </header>
+
+    <nav class="sport-tabs" role="tablist">
+      <button class="sport-tab active" type="button" data-target="cricket">&#127934; Cricket</button>
+      <button class="sport-tab" type="button" data-target="football">&#9917; Football</button>
+      <button class="sport-tab" type="button" data-target="volleyball">&#127936; Volleyball</button>
+      <button class="sport-tab" type="button" data-target="shortgame">&#127919; Short Game</button>
+    </nav>
+
+    <div class="sport-panels">
+    <div class="sport-block is-active" id="cricket">
+      <div class="fixture-list">
+        <div class="fixture">
+          <article class="team-card team-card--red">
+            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <h4 class="team-card-name">Red Warriors</h4>
+            <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--blue">
+            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <h4 class="team-card-name">The Falcons</h4>
+            <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
+          </article>
+        </div>
+
+        <div class="fixture">
+          <article class="team-card team-card--white">
+            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <h4 class="team-card-name">The Wolves</h4>
+            <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--gold">
+            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <h4 class="team-card-name">Golden Tigers</h4>
+            <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="sport-block" id="football">
+      <div class="fixture-list">
+        <div class="fixture">
+          <article class="team-card team-card--red">
+            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <h4 class="team-card-name">Red Warriors</h4>
+            <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--gold">
+            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <h4 class="team-card-name">Golden Tigers</h4>
+            <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
+          </article>
+        </div>
+
+        <div class="fixture">
+          <article class="team-card team-card--white">
+            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <h4 class="team-card-name">The Wolves</h4>
+            <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--blue">
+            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <h4 class="team-card-name">The Falcons</h4>
+            <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="sport-block" id="volleyball">
+      <div class="fixture-list">
+        <div class="fixture">
+          <article class="team-card team-card--red">
+            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <h4 class="team-card-name">Red Warriors</h4>
+            <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--white">
+            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <h4 class="team-card-name">The Wolves</h4>
+            <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
+          </article>
+        </div>
+
+        <div class="fixture">
+          <article class="team-card team-card--gold">
+            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <h4 class="team-card-name">Golden Tigers</h4>
+            <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
+          </article>
+          <div class="vs-badge"><span>VS</span></div>
+          <article class="team-card team-card--blue">
+            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <h4 class="team-card-name">The Falcons</h4>
+            <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="sport-block" id="shortgame">
+      <div class="coming-soon">
+        <span class="coming-soon-icon">&#127919;</span>
+        <h4>Rules Dropping Soon</h4>
+        <p>We're still finalizing the Short Game format. Check back closer to the event for the full rulebook.</p>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== FLY TRANSITION + FOOD ===== -->
+<section class="fly-transition" id="food">
+  <div class="fly-sticky">
+    <div class="fly-bg" id="flyBg">
+      <video class="fly-video" id="flyVideo" muted playsinline poster="assets/images/food-bg.jpg">
+        <source src="assets/videos/food-bg.mp4" type="video/mp4">
+      </video>
+      <div class="fly-video-overlay"></div>
+      <div class="fly-glow"></div>
+    </div>
+    <div class="fly-flash" id="flyFlash"></div>
+    <img src="assets/images/heroes/iron-man-flying.png" alt="" aria-hidden="true" class="fly-ironman fly-ironman-trail" id="flyIronmanTrail">
+    <img src="assets/images/heroes/iron-man-flying.png" alt="Iron Man flying in" class="fly-ironman" id="flyIronman">
+    <div class="food-reveal" id="foodReveal">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Hero Fuel</p>
+      <h2 class="food-title">Breakfast &amp; Lunch</h2>
+      <p class="food-sub">Fast, filling, and ready before kickoff.</p>
+
+      <div class="food-cards">
+        <div class="food-card">
+          <span class="food-card-icon">&#127869;</span>
+          <h3>Breakfast</h3>
+          <ul>
+            <li>Paratha &amp; egg bhurji</li>
+            <li>Fresh seasonal fruit</li>
+            <li>Tea, coffee &amp; juice</li>
+          </ul>
+          <p class="food-note">Sample menu &mdash; final spread confirmed soon.</p>
+        </div>
+        <div class="food-card">
+          <span class="food-card-icon">&#127836;</span>
+          <h3>Lunch</h3>
+          <ul>
+            <li>Chicken &amp; veg biryani</li>
+            <li>Mixed salad &amp; raita</li>
+            <li>Dessert &amp; cold drinks</li>
+          </ul>
+          <p class="food-note">Sample menu &mdash; final spread confirmed soon.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>
