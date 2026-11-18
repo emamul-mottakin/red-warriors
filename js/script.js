@@ -26,33 +26,87 @@ if (navToggle) {
   });
 }
 
-// ===== Subtle parallax on hero visual (mouse move) =====
-const hero = document.getElementById('hero');
-const heroImgWrap = document.getElementById('heroImgWrap');
+// ===== Hero superhero carousel =====
+// Two heroes on screen at once:
+//   FOCUS      – sharp, bottom: 0 / right: 30px, behind
+//   FOREGROUND – blurred, bottom: 0 / right: -20% (bleeds off the screen), on top
+// Each step is a camera "rack focus": the focused hero pushes forward into the blurred
+// foreground spot, the next hero emerges from behind it into sharp focus, and the old
+// foreground hero flies off past the right edge and disappears.
+const heroCarousel = document.getElementById('heroCarousel');
 
-if (hero && heroImgWrap && window.matchMedia('(pointer: fine)').matches) {
-  let targetX = 0, targetY = 0, curX = 0, curY = 0;
+if (heroCarousel && window.gsap) {
+  const slides = Array.from(heroCarousel.querySelectorAll('.hero-slide'));
+  const isPhoneHero = window.matchMedia('(max-width: 760px)').matches;
 
-  hero.addEventListener('mousemove', (e) => {
-    const rect = hero.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5;
-    const py = (e.clientY - rect.top) / rect.height - 0.5;
-    targetX = px * 18;
-    targetY = py * 14;
-  });
+  if (isPhoneHero || slides.length < 2) {
+    // phones stay simple and stable: just show the first hero, centered, no animation
+    gsap.set(slides[0], { opacity: 1, xPercent: -50 });
+  } else {
+    const n = slides.length;
+    const HOLD = 2.2; // seconds each hero stays sharp
+    const SWAP = 0.85; // seconds for the rack-focus swap
 
-  hero.addEventListener('mouseleave', () => {
-    targetX = 0;
-    targetY = 0;
-  });
+    // distance from right: 30px to right: -20% of the screen
+    const fgX = () => heroCarousel.offsetWidth * 0.2 + 30;
+    const exitX = () => fgX() + heroCarousel.offsetWidth * 0.35;
 
-  function animateParallax() {
-    curX += (targetX - curX) * 0.06;
-    curY += (targetY - curY) * 0.06;
-    heroImgWrap.style.transform = `translate(${curX}px, ${curY}px)`;
-    requestAnimationFrame(animateParallax);
+    const FOCUS = { x: 0, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)' };
+    const FOREGROUND = { x: fgX, scale: 1.1, opacity: 1, filter: 'blur(12px) brightness(0.8)' };
+    const EXIT = { x: exitX, scale: 1.3, opacity: 0, filter: 'blur(22px) brightness(0.7)' };
+    // where a new hero starts: tucked behind the focused one, smaller and out of focus
+    const BEHIND = { x: () => -heroCarousel.offsetWidth * 0.05, scale: 0.88, opacity: 0, filter: 'blur(14px) brightness(0.6)' };
+
+    gsap.set(slides, { ...BEHIND, zIndex: 0 });
+
+    let focusIndex = 0;
+    let fgIndex = -1; // nobody in the foreground until the first swap
+
+    // opening: the first hero emerges from behind into focus
+    gsap.set(slides[focusIndex], { zIndex: 2 });
+    gsap.to(slides[focusIndex], { ...FOCUS, duration: 1.1, ease: 'power3.out', delay: 0.3 });
+
+    function swap() {
+      const nextIndex = (focusIndex + 1) % n;
+
+      // 1) old blurred foreground hero flies off the right edge and disappears
+      if (fgIndex !== -1) {
+        const leaving = slides[fgIndex];
+        gsap.set(leaving, { zIndex: 4 });
+        gsap.to(leaving, {
+          ...EXIT,
+          duration: SWAP,
+          ease: 'power2.in',
+          onComplete: () => gsap.set(leaving, { ...BEHIND, zIndex: 0 }),
+        });
+      }
+
+      // 2) focused hero pushes forward into the blurred foreground spot, on top
+      gsap.set(slides[focusIndex], { zIndex: 3 });
+      gsap.to(slides[focusIndex], { ...FOREGROUND, duration: SWAP, ease: 'power3.inOut' });
+
+      // 3) next hero comes out from behind and racks into sharp focus
+      gsap.set(slides[nextIndex], { ...BEHIND, zIndex: 1 });
+      gsap.to(slides[nextIndex], {
+        ...FOCUS,
+        duration: SWAP,
+        delay: 0.12,
+        ease: 'power3.out',
+        onComplete: () => gsap.set(slides[nextIndex], { zIndex: 2 }),
+      });
+
+      fgIndex = focusIndex;
+      focusIndex = nextIndex;
+      gsap.delayedCall(SWAP + HOLD, swap);
+    }
+
+    gsap.delayedCall(1.4 + HOLD, swap);
+
+    // keep the foreground hero pinned to right: -20% when the window is resized
+    window.addEventListener('resize', () => {
+      if (fgIndex !== -1 && !gsap.isTweening(slides[fgIndex])) gsap.set(slides[fgIndex], { x: fgX() });
+    });
   }
-  animateParallax();
 }
 
 // ===== Sports tabs =====
