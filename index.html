@@ -135,6 +135,15 @@
 
 <!-- ===== SPORTS ===== -->
 <section class="sports" id="sports">
+  <div class="arena-bg" aria-hidden="true">
+    <div class="arena-portal">
+      <img class="arena-disc" src="assets/images/arena/cream-disc.webp" alt="">
+      <img class="arena-ring arena-ring--back" src="assets/images/arena/portal-ring.webp" alt="">
+      <img class="arena-ring" src="assets/images/arena/portal-ring.webp" alt="">
+    </div>
+    <div class="arena-shade"></div>
+  </div>
+  <img class="arena-hero" src="assets/images/arena/doctor-strange.png" alt="" aria-hidden="true">
   <div class="sports-inner">
 
     <header class="sports-head">
@@ -144,10 +153,10 @@
     </header>
 
     <nav class="sport-tabs" role="tablist">
-      <button class="sport-tab active" type="button" data-target="cricket">&#127934; Cricket</button>
-      <button class="sport-tab" type="button" data-target="football">&#9917; Football</button>
-      <button class="sport-tab" type="button" data-target="volleyball">&#127936; Volleyball</button>
-      <button class="sport-tab" type="button" data-target="shortgame">&#127919; Short Game</button>
+      <button class="sport-tab active" type="button" role="tab" data-target="cricket"><span class="st-num">01</span><span class="st-label">Cricket</span><span class="st-arrow" aria-hidden="true"></span></button>
+      <button class="sport-tab" type="button" role="tab" data-target="football"><span class="st-num">02</span><span class="st-label">Football</span><span class="st-arrow" aria-hidden="true"></span></button>
+      <button class="sport-tab" type="button" role="tab" data-target="volleyball"><span class="st-num">03</span><span class="st-label">Volleyball</span><span class="st-arrow" aria-hidden="true"></span></button>
+      <button class="sport-tab" type="button" role="tab" data-target="shortgame"><span class="st-num">04</span><span class="st-label">Short Game</span><span class="st-arrow" aria-hidden="true"></span></button>
     </nav>
 
     <div class="sport-panels">
@@ -410,55 +419,29 @@
       <p class="section-sub">Every hero has a role. Here's who keeps the Red Warriors running.</p>
     </header>
 
-    <div class="squad-grid">
-      <article class="squad-card reveal">
+    <div class="squad-lead">
+      <article class="squad-card squad-card--lead reveal">
         <img src="assets/images/hero-carousel/captain-america.png" alt="" loading="lazy">
         <div class="squad-info">
-          <span class="squad-role">Team Captain</span>
+          <span class="squad-role">Team Owner</span>
           <h3 class="squad-name">Captain America</h3>
-          <p class="squad-alias">Player name coming soon</p>
+          <p class="squad-alias">Owner name coming soon</p>
         </div>
       </article>
-      <article class="squad-card reveal">
+      <article class="squad-card squad-card--lead reveal">
         <img src="assets/images/hero-carousel/iron-man.png" alt="" loading="lazy">
         <div class="squad-info">
-          <span class="squad-role">Game Strategist</span>
+          <span class="squad-role">Team Manager</span>
           <h3 class="squad-name">Iron Man</h3>
-          <p class="squad-alias">Player name coming soon</p>
+          <p class="squad-alias">Manager name coming soon</p>
         </div>
       </article>
-      <article class="squad-card reveal">
-        <img src="assets/images/hero-carousel/spider-man.png" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Vibe Setter</span>
-          <h3 class="squad-name">Spider-Man</h3>
-          <p class="squad-alias">Player name coming soon</p>
-        </div>
-      </article>
-      <article class="squad-card reveal">
-        <img src="assets/images/hero-carousel/hulk.webp" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Snack Commander</span>
-          <h3 class="squad-name">Hulk</h3>
-          <p class="squad-alias">Player name coming soon</p>
-        </div>
-      </article>
-      <article class="squad-card reveal">
-        <img src="assets/images/hero-carousel/thor.png" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Hype Engine</span>
-          <h3 class="squad-name">Thor</h3>
-          <p class="squad-alias">Player name coming soon</p>
-        </div>
-      </article>
-      <article class="squad-card reveal">
-        <img src="assets/images/hero-carousel/black-widow.png" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Event Planner</span>
-          <h3 class="squad-name">Black Widow</h3>
-          <p class="squad-alias">Player name coming soon</p>
-        </div>
-      </article>
+    </div>
+
+    <div class="squad-grid" id="playerGrid"></div>
+
+    <div class="squad-more">
+      <button type="button" class="btn btn-primary" id="playerMore" aria-expanded="false">Show All Players</button>
     </div>
   </div>
 </section>

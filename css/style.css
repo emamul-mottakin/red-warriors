@@ -604,99 +604,243 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background:
-    radial-gradient(ellipse 60% 45% at 50% 0%, rgba(232,35,42,0.07), transparent 65%),
-    linear-gradient(170deg, #fbf4e6 0%, #f4e6cd 55%, #ecd9b4 100%);
-  padding: clamp(80px, 11vh, 110px) 32px clamp(20px, 3vh, 32px);
+  background: #7a0000 url('../assets/images/arena/red-bg.webp') center / cover no-repeat;
+  padding: clamp(84px, 12vh, 116px) clamp(24px, 4vw, 64px) clamp(20px, 3vh, 36px);
 }
 
-.sports::before {
-  content: '';
+/* cream scratched disc: its curved edge cuts the red side like the reference */
+.arena-bg {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(42,32,25,0.55) 1px, transparent 1.4px);
-  background-size: 22px 22px;
-  opacity: 0.05;
+  z-index: 0;
   pointer-events: none;
+}
+/* .arena-portal is a square exactly the size of the cream circle;
+   the disc and the spark ring are both fitted to it, so the sparks ride the disc edge */
+.arena-portal {
+  position: absolute;
+  top: 50%;
+  left: 52.5%;
+  width: max(60vw, 98vh);
+  aspect-ratio: 1;
+  transform: translateY(-50%);
+}
+.arena-disc {
+  position: absolute;
+  /* the circle inside cream-disc.webp starts 3.3% / 2.6% in and is 88.7% of the image width */
+  width: 112.74%;
+  max-width: none;
+  height: auto;
+  left: -3.72%;
+  top: -2.93%;
+  filter: drop-shadow(-12px 0 16px rgba(30, 0, 0, 0.5)) drop-shadow(-2px 0 1px rgba(20, 0, 0, 0.55));
+}
+/* the bolt line inside portal-ring.webp is ~77.7% of the image width, centered at 49.8% / 48.3% */
+.arena-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 128.7%;
+  max-width: none;
+  height: auto;
+  transform-origin: 49.84% 48.34%;
+  transform: translate(-49.84%, -48.34%) rotate(0deg);
+  mix-blend-mode: screen;
+  /* keep only the bolt band: the ring image has a soft white haze inside that would wash out the cream */
+  -webkit-mask-image: radial-gradient(ellipse 36% 38% at 49.84% 48.34%, transparent 80%, #000 100%);
+          mask-image: radial-gradient(ellipse 36% 38% at 49.84% 48.34%, transparent 80%, #000 100%);
+  animation: portalSpin 9s linear infinite, portalFlicker 2.4s ease-in-out infinite;
+  will-change: transform;
+}
+.arena-ring--back {
+  width: 133%;
+  opacity: 0.55;
+  animation: portalSpinBack 14s linear infinite, portalFlicker 3.1s ease-in-out infinite reverse;
+}
+@keyframes portalSpin {
+  to { transform: translate(-49.84%, -48.34%) rotate(360deg); }
+}
+@keyframes portalSpinBack {
+  from { transform: translate(-49.84%, -48.34%) rotate(360deg); }
+  to   { transform: translate(-49.84%, -48.34%) rotate(0deg); }
+}
+@keyframes portalFlicker {
+  0%, 100% { filter: brightness(1) drop-shadow(0 0 18px rgba(255, 170, 40, 0.55)); }
+  45%      { filter: brightness(1.35) drop-shadow(0 0 30px rgba(255, 190, 60, 0.8)); }
+  55%      { filter: brightness(0.95) drop-shadow(0 0 14px rgba(255, 150, 30, 0.45)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arena-ring { animation: none; }
+}
+.arena-shade {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 0% 100%, rgba(40,0,0,0.5), transparent 70%),
+    linear-gradient(180deg, rgba(30,0,0,0.35), transparent 22%);
+}
+
+/* hero standing on the seam */
+.arena-hero {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 15%;
+  height: min(74vh, 50vw);
+  width: auto;
+  pointer-events: none;
+  filter: drop-shadow(0 0 40px rgba(255, 120, 40, 0.18)) drop-shadow(18px 10px 26px rgba(25, 0, 0, 0.55));
+  /* breathing: uses the individual scale/translate properties so it stacks with the responsive transform */
+  transform-origin: 50% 100%;
+  animation: strangeBreathe 5.2s ease-in-out infinite;
+  will-change: scale, translate;
+}
+@keyframes strangeBreathe {
+  0%, 100% { scale: 1 1;         translate: 0 0; }
+  45%      { scale: 1.012 1.028; translate: 0 -0.4%; }
+  60%      { scale: 1.012 1.028; translate: 0 -0.4%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .arena-hero { animation: none; }
 }
 
 .sports-inner {
   position: relative;
-  z-index: 1;
-  max-width: 1320px;
+  z-index: 2;
+  max-width: 1500px;
   width: 100%;
   margin: 0 auto;
   height: 100%;
-  display: flex;
-  flex-direction: column;
   min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr clamp(380px, 38vw, 600px);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    'head   panels'
+    'tabs   panels';
+  column-gap: clamp(20px, 3vw, 48px);
+  align-content: stretch;
 }
 
 .sports-head {
-  flex: none;
-  text-align: center;
-  max-width: 680px;
-  margin: 0 auto clamp(14px, 2.2vh, 22px);
+  grid-area: head;
+  text-align: left;
+  max-width: 460px;
+  margin: 0 0 clamp(18px, 3.5vh, 36px);
 }
 .sports-head .eyebrow {
-  justify-content: center;
+  justify-content: flex-start;
+  color: var(--cream);
   animation: none;
   opacity: 1;
   transform: none;
 }
+.sports-head .eyebrow-dot { background: var(--cream); box-shadow: 0 0 10px 2px rgba(246,236,217,0.8); }
 .sports-title {
   font-family: var(--font-hero);
   font-weight: 400;
-  font-size: clamp(1.8rem, 2vw + 2.2vh, 3.6rem);
+  font-size: clamp(2.2rem, 2.6vw + 3vh, 4.8rem);
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--ink-warm);
+  color: var(--cream);
+  text-shadow: 0 4px 0 rgba(60,0,0,0.55), 0 10px 28px rgba(0,0,0,0.4);
   margin-bottom: clamp(6px, 1vh, 12px);
-  line-height: 1;
+  line-height: 0.95;
 }
 .sports-sub {
-  font-size: clamp(0.85rem, 0.9vh + 0.4vw, 1.05rem);
+  font-size: clamp(0.9rem, 0.9vh + 0.45vw, 1.1rem);
   line-height: 1.5;
-  color: rgba(42,32,25,0.62);
+  color: rgba(246,236,217,0.78);
 }
 
+/* ---- tabs: numbered rows, cream fill sweeps in behind the active one ---- */
 .sport-tabs {
-  flex: none;
+  grid-area: tabs;
+  align-self: start;
   display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin: 0 auto clamp(18px, 3vh, 30px);
+  flex-direction: column;
+  gap: 8px;
+  width: min(100%, 340px);
 }
 .sport-tab {
-  display: inline-flex;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 34px 1fr 22px;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  text-align: left;
+  padding: clamp(10px, 1.6vh, 16px) 18px;
+  color: rgba(246,236,217,0.8);
+  background: rgba(20, 0, 0, 0.18);
+  border: 1px solid rgba(246,236,217,0.22);
+  border-radius: 14px;
+  backdrop-filter: blur(2px);
+  cursor: pointer;
+  transition: color .3s ease, transform .35s cubic-bezier(.22,1,.36,1), border-color .3s ease, box-shadow .35s ease;
+}
+.sport-tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(100deg, #fbf3e2, #ecd9b4);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform .5s cubic-bezier(.22,1,.36,1);
+}
+.st-num {
   font-family: var(--font-head);
   font-weight: 600;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  opacity: 0.65;
+}
+.st-label {
+  font-family: var(--font-hero);
+  font-size: clamp(1.15rem, 0.9vw + 1.4vh, 1.7rem);
   text-transform: uppercase;
-  color: var(--ink-warm);
-  background: rgba(255,255,255,0.55);
-  border: 1px solid rgba(42,32,25,0.15);
-  border-radius: 999px;
-  padding: 9px 18px;
-  cursor: pointer;
-  transition: all 0.25s ease;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.st-arrow {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  position: relative;
+  opacity: 0.5;
+  transition: transform .35s cubic-bezier(.22,1,.36,1), opacity .3s ease, background .3s ease;
+}
+.st-arrow::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 6px; height: 6px;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+  transform: translate(-65%, -50%) rotate(45deg);
 }
 .sport-tab:hover {
-  border-color: var(--red);
-  color: var(--red);
+  color: #fff;
+  transform: translateX(8px);
+  border-color: rgba(246,236,217,0.55);
 }
+.sport-tab:hover .st-arrow { opacity: 0.9; transform: translateX(3px); }
 .sport-tab.active {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--white);
-  box-shadow: 0 8px 16px rgba(232,35,42,0.3);
+  color: var(--red-deep);
+  border-color: transparent;
+  transform: translateX(14px);
+  box-shadow: 0 14px 28px rgba(20,0,0,0.4);
 }
+.sport-tab.active::before { transform: scaleX(1); }
+.sport-tab.active .st-num { opacity: 1; color: var(--red); }
+.sport-tab.active .st-arrow { opacity: 1; background: var(--red); color: #fff; border-color: var(--red); transform: rotate(90deg); }
 
 .sport-panels {
+  grid-area: panels;
+  align-self: stretch;
   position: relative;
   flex: 1;
   min-height: 0;
@@ -705,6 +849,9 @@ a { text-decoration: none; color: inherit; }
 .sport-block {
   display: none;
   height: 100%;
+  /* the block scrolls (overflow clips), so give the card shadows room to fade out instead of being cut in a hard line */
+  padding: 24px 56px 56px;
+  margin: -24px -56px -56px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -1109,8 +1256,6 @@ a { text-decoration: none; color: inherit; }
   .sport-panels { flex: 1; }
   .sport-block { height: auto; overflow: visible; }
   .sport-block.is-active { min-height: 100%; }
-  .sport-tabs { gap: 6px; margin-bottom: 14px; }
-  .sport-tab { padding: 7px 12px; font-size: 0.72rem; }
   .fixture-list { --photo-h: 64px; gap: 44px; margin-top: 36px; }
   .fixture { gap: 8px; }
   .team-card { max-width: 150px; }
@@ -1466,11 +1611,28 @@ a { text-decoration: none; color: inherit; }
 
 /* ================= SQUAD ================= */
 
+.squad-lead {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 220px));
+  justify-content: center;
+  gap: clamp(14px, 2vw, 24px);
+  margin-bottom: clamp(14px, 2vw, 24px);
+}
+.squad-card--lead { aspect-ratio: 5 / 4; }
+.squad-card--lead .squad-name { font-size: clamp(1.05rem, 0.6vw + 0.9rem, 1.35rem); }
 .squad-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(16px, 2vw, 28px);
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
 }
+.squad-grid .squad-card { aspect-ratio: 3 / 4; border-radius: 14px; }
+.squad-grid .squad-info { padding: 14px; }
+.squad-grid .squad-role { font-size: 0.58rem; letter-spacing: 1.4px; padding: 3px 6px; margin-bottom: 6px; }
+.squad-grid .squad-name { font-size: clamp(0.95rem, 0.4vw + 0.85rem, 1.15rem); }
+.squad-grid .squad-alias { font-size: 0.78rem; }
+.squad-card[hidden] { display: none; }
+.squad-more { display: flex; justify-content: center; margin-top: 32px; }
+.squad-more[hidden] { display: none; }
 .squad-card {
   position: relative;
   isolation: isolate;
@@ -1726,7 +1888,6 @@ a { text-decoration: none; color: inherit; }
 /* ================= NEW SECTIONS: TABLET + PHONE ================= */
 
 @media (max-width: 1080px) {
-  .squad-grid { grid-template-columns: repeat(2, 1fr); }
   .rules-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
@@ -1758,8 +1919,10 @@ a { text-decoration: none; color: inherit; }
   .timeline-item:nth-child(even) .timeline-card--sport { border-right: 1px solid rgba(42,32,25,0.08); border-left: 3px solid var(--red); }
   .timeline-card p { font-size: 0.92rem; }
 
-  .squad-grid { gap: 12px; }
+  .squad-grid { gap: 12px; grid-template-columns: repeat(2, 1fr); }
+  .squad-lead { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .squad-card { aspect-ratio: 3 / 4; border-radius: 14px; }
+  .squad-card--lead { aspect-ratio: 3 / 4; }
   .squad-info { padding: 12px; }
   .squad-role { font-size: 0.56rem; letter-spacing: 1.2px; padding: 3px 6px; margin-bottom: 6px; }
   .squad-name { font-size: 1rem; }
@@ -1774,4 +1937,61 @@ a { text-decoration: none; color: inherit; }
   .footer-bar { flex-direction: column; gap: 22px; text-align: center; }
   .footer-links { justify-content: center; gap: 18px; }
   .footer-pop { -webkit-text-stroke: 1.4px var(--white); }
+}
+
+
+/* ===== Arena: stacked layout (tablet + phone) ===== */
+@media (max-width: 1080px) {
+  .arena-portal {
+    top: 40%;
+    left: 50%;
+    width: max(133vw, 674px);
+    transform: translateX(-50%);
+  }
+  /* tablets: the sticky one-screen panel has no spare height, so Strange only returns on phones (below) */
+  .arena-hero {
+    display: none;
+    left: 50%;
+    height: min(40svh, 92vw);
+    transform: translateX(-56%);
+    z-index: 1;
+  }
+  .sports-inner {
+    display: flex;
+    flex-direction: column;
+    max-width: 760px;
+  }
+  .sports-head { text-align: center; margin: 0 auto clamp(14px, 2.4vh, 24px); }
+  .sports-head .eyebrow { justify-content: center; }
+  .sport-tabs {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+    margin: 0 auto clamp(18px, 3vh, 30px);
+  }
+  .sport-tab {
+    display: inline-flex;
+    gap: 8px;
+    padding: 9px 16px;
+    border-radius: 999px;
+  }
+  .st-arrow { display: none; }
+  .st-label { font-size: 1rem; }
+  .sport-tab:hover, .sport-tab.active { transform: translateY(-2px); }
+}
+@media (max-width: 760px) {
+  /* portal starts just under the tabs; extra bottom padding gives Strange his own stage below the cards */
+  .sports { padding-bottom: min(46svh, 104vw); }
+  .arena-portal { top: 345px; width: 168vw; }
+  .arena-hero { display: block; height: min(50svh, 112vw); transform: translateX(-58%); }
+}
+/* landscape tablets/phones: no spare height under the cards, so hide Strange */
+@media (max-width: 1080px) and (orientation: landscape) {
+  .arena-hero { display: none; }
+  .sport-tabs { gap: 6px; margin-bottom: 14px; }
+  .sport-tab { padding: 7px 12px; }
+  .st-num { display: none; }
+  .st-label { font-size: 0.9rem; }
 }

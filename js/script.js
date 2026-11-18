@@ -175,10 +175,27 @@ sportTabs.forEach((tab) => {
   tab.addEventListener('click', () => {
     const target = tab.dataset.target;
 
-    sportTabs.forEach((t) => t.classList.toggle('active', t === tab));
+    if (tab.classList.contains('active')) return;
+
+    sportTabs.forEach((t) => {
+      t.classList.toggle('active', t === tab);
+      t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+    });
     sportBlocks.forEach((block) => {
       block.classList.toggle('is-active', block.id === target);
     });
+
+    // cards rise in one after another, VS badges pop
+    const next = document.getElementById(target);
+    if (next && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      gsap.killTweensOf(next.querySelectorAll('.team-card, .vs-badge, .coming-soon'));
+      gsap.fromTo(next.querySelectorAll('.team-card, .coming-soon'),
+        { y: 36, opacity: 0, scale: 0.94 },
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'power3.out', stagger: 0.07, clearProps: 'transform,opacity' });
+      gsap.fromTo(next.querySelectorAll('.vs-badge'),
+        { scale: 0, rotate: -90 },
+        { scale: 1, rotate: 0, duration: 0.55, ease: 'back.out(2.2)', stagger: 0.07, delay: 0.15, clearProps: 'transform' });
+    }
   });
 });
 
@@ -370,6 +387,33 @@ updateActiveNav();
 window.addEventListener('scroll', updateActiveNav, { passive: true });
 window.addEventListener('resize', () => { measureSections(); updateActiveNav(); });
 window.addEventListener('load', () => { measureSections(); updateActiveNav(); });
+
+// ===== Squad players: render 33 cards, show 12 first, rest on "show more" =====
+(function () {
+  const grid = document.getElementById('playerGrid');
+  const btn = document.getElementById('playerMore');
+  if (!grid || !btn) return;
+  const TOTAL = 33, INITIAL = 12;
+  const imgs = ['spider-man.png', 'hulk.webp', 'thor.png', 'black-widow.png', 'captain-america.png', 'iron-man.png'];
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < TOTAL; i++) {
+    const card = document.createElement('article');
+    card.className = 'squad-card';
+    if (i >= INITIAL) card.hidden = true;
+    card.innerHTML =
+      '<img src="assets/images/hero-carousel/' + imgs[i % imgs.length] + '" alt="" loading="lazy">' +
+      '<div class="squad-info"><span class="squad-role">Player</span>' +
+      '<h3 class="squad-name">Player ' + String(i + 1).padStart(2, '0') + '</h3>' +
+      '<p class="squad-alias">Player name coming soon</p></div>';
+    frag.appendChild(card);
+  }
+  grid.appendChild(frag);
+  btn.addEventListener('click', () => {
+    grid.querySelectorAll('.squad-card[hidden]').forEach((c) => { c.hidden = false; });
+    btn.parentElement.hidden = true;
+    btn.setAttribute('aria-expanded', 'true');
+  });
+})();
 
 // ===== Reveal on scroll for the itinerary, squad, rules and footer =====
 if (window.gsap && window.ScrollTrigger) {
