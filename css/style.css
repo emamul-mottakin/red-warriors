@@ -993,39 +993,53 @@ a { text-decoration: none; color: inherit; }
 /* ================= RESPONSIVE ================= */
 
 @media (max-width: 1080px) {
+  /* tablet + phone: one pinned screen. text + buttons on top, hero carousel at the
+     bottom. the next section slides up over it, same sticky scroll as desktop. */
   .hero {
-    position: relative;
-    top: auto;
-    height: auto;
-    min-height: 100vh;
-    overflow: visible;
-    padding-bottom: 40px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    min-height: 0;
+    overflow: hidden;
+    justify-content: flex-start;
+    padding-bottom: 0;
   }
   .hero-grid {
     grid-template-columns: 1fr;
-    height: auto;
-    padding-top: 140px;
-    text-align: left;
+    padding: 104px 32px 14px;
+    gap: 0;
+    flex: none;
+    text-align: center;
   }
-  .hero-visual {
-    min-height: 420px;
-    order: -1;
-    margin-bottom: -10px;
-  }
-  /* tablet: carousel drops back into the flow above the text */
+  .hero-visual { display: none; }
+  .hero-footer { display: none; }
+  .hero-content { max-width: 640px; margin: 0 auto; }
+  .hero-copy { margin-left: auto; margin-right: auto; }
+  .hero-actions { justify-content: center; }
+
+  /* shorter copy on tablet + phone so the text block stays compact */
+  .copy-extra { display: none; }
+
+  /* the carousel takes whatever height is left under the text, so it can never
+     overlap it, whatever the screen's shape */
   .hero-carousel {
     position: relative;
     inset: auto;
-    width: 100%;
-    height: min(520px, 62vh);
-    margin-top: 80px;
-    overflow: hidden;
-    order: -1;
+    flex: 1 1 0;
+    min-height: 0;
+    max-height: min(128vw, 700px);
+    margin-top: auto;
+    container-type: size;
   }
-  .hero-slide { height: 100%; }
-  .hero-visual { display: none; }
-  .hero-grid { padding-top: 24px; }
-  .hero-content { max-width: 640px; }
+  /* slides are centered horizontally; GSAP shifts them left/right from that center */
+  .hero-slide {
+    height: 100cqh;
+    aspect-ratio: 869 / 781;
+    right: auto;
+    left: 50%;
+    margin-left: calc(-0.556 * 100cqh);
+  }
 }
 
 @media (max-width: 760px) {
@@ -1043,16 +1057,23 @@ a { text-decoration: none; color: inherit; }
   body { overflow-x: hidden; overflow-x: clip; max-width: 100%; min-height: 0; position: relative; }
   .fly-bg, .fly-video { max-width: 100%; }
 
-  /* hero: normal flow, compact */
-  .hero { min-height: 0; padding-bottom: 24px; }
-  .hero-grid { padding-top: 84px; gap: 8px; }
-  .hero-visual { min-height: 0; margin-bottom: 0; }
-  .hero-carousel { height: min(300px, 40vh); margin-top: 72px; }
-  .hero-grid { padding-top: 12px; }
-  /* phones show one static hero, centered */
-  .hero-slide { right: auto; left: 50%; height: 100%; }
+  /* hero: pinned, compact type (Sakana kept, just smaller) */
+  .hero-grid { padding: 78px 18px 20px; }
+  .eyebrow { font-size: 0.62rem; letter-spacing: 1.6px; gap: 7px; margin-bottom: 8px; }
+  .hero-heading { font-size: clamp(1.7rem, 9.2vw, 2.5rem); line-height: 1.02; margin-bottom: 8px; }
+  .hero-heading .pop { -webkit-text-stroke: 1.2px var(--white); }
+  .hero-copy { font-size: 0.9rem; line-height: 1.42; margin-bottom: 14px; }
+  .hero-actions { flex-direction: column; align-items: stretch; gap: 0; margin-bottom: 0; }
+  .btn { justify-content: center; padding: 12px 18px; font-size: 0.78rem; }
+  .btn-ghost { align-self: center; padding: 10px 4px 6px; }
   .glow-burst, .web-corner { display: none; }
-  .hero-footer { display: none; }
+
+  /* short phones: tighten the text block so the hero never sits on the buttons */
+  @media (max-height: 700px) {
+    .hero-grid { padding-top: 70px; padding-bottom: 18px; }
+    .hero-copy { font-size: 0.85rem; line-height: 1.36; margin-bottom: 10px; }
+    .btn { padding: 10px 18px; }
+  }
 
   /* sports: no sticky / fixed height / inner scrollbars */
   .sports {

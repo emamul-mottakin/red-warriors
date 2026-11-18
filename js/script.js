@@ -37,25 +37,36 @@ const heroCarousel = document.getElementById('heroCarousel');
 
 if (heroCarousel && window.gsap) {
   const slides = Array.from(heroCarousel.querySelectorAll('.hero-slide'));
-  const isPhoneHero = window.matchMedia('(max-width: 760px)').matches;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // tablet + phone: slides are centered in the carousel, so offsets are measured from the center
+  const isCompact = () => window.matchMedia('(max-width: 1080px)').matches;
+  const W = () => heroCarousel.offsetWidth;
 
-  if (isPhoneHero || slides.length < 2) {
-    // phones stay simple and stable: just show the first hero, centered, no animation
-    gsap.set(slides[0], { opacity: 1, xPercent: -50 });
+  if (reduceMotion || slides.length < 2) {
+    // no motion wanted: just show the first hero
+    gsap.set(slides[0], { opacity: 1, x: isCompact() ? -W() * 0.07 : 0 });
   } else {
     const n = slides.length;
     const HOLD = 2.2; // seconds each hero stays sharp
     const SWAP = 0.85; // seconds for the rack-focus swap
 
-    // distance from right: 30px to right: -20% of the screen
-    const fgX = () => heroCarousel.offsetWidth * 0.2 + 30;
-    const exitX = () => fgX() + heroCarousel.offsetWidth * 0.35;
+    // desktop: sharp hero rests at right: 30px, blurred one slides to right: -20%
+    // compact: sharp hero sits a little left of center, blurred one bleeds off the right edge
+    const focusX = () => (isCompact() ? -W() * 0.07 : 0);
+    const fgX = () => (isCompact() ? W() * 0.31 : W() * 0.2 + 30);
+    const exitX = () => fgX() + W() * (isCompact() ? 0.6 : 0.35);
 
-    const FOCUS = { x: 0, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)' };
-    const FOREGROUND = { x: fgX, scale: 1.1, opacity: 1, filter: 'blur(12px) brightness(0.8)' };
+    const FOCUS = { x: focusX, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)' };
+    // smaller screens get a lighter blur and brightness drop so the foreground hero stays visible
+    const FOREGROUND = {
+      x: fgX,
+      scale: 1.1,
+      opacity: 1,
+      filter: () => (isCompact() ? 'blur(7px) brightness(0.92)' : 'blur(12px) brightness(0.8)'),
+    };
     const EXIT = { x: exitX, scale: 1.3, opacity: 0, filter: 'blur(22px) brightness(0.7)' };
     // where a new hero starts: tucked behind the focused one, smaller and out of focus
-    const BEHIND = { x: () => -heroCarousel.offsetWidth * 0.05, scale: 0.88, opacity: 0, filter: 'blur(14px) brightness(0.6)' };
+    const BEHIND = { x: () => focusX() - W() * 0.05, scale: 0.88, opacity: 0, filter: 'blur(14px) brightness(0.6)' };
 
     gsap.set(slides, { ...BEHIND, zIndex: 0 });
 
@@ -102,8 +113,9 @@ if (heroCarousel && window.gsap) {
 
     gsap.delayedCall(1.4 + HOLD, swap);
 
-    // keep the foreground hero pinned to right: -20% when the window is resized
+    // keep both heroes in their spots when the window is resized or rotated
     window.addEventListener('resize', () => {
+      if (!gsap.isTweening(slides[focusIndex])) gsap.set(slides[focusIndex], { x: focusX() });
       if (fgIndex !== -1 && !gsap.isTweening(slides[fgIndex])) gsap.set(slides[fgIndex], { x: fgX() });
     });
   }
