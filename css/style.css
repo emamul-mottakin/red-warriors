@@ -206,6 +206,24 @@ a { text-decoration: none; color: inherit; }
   overflow: hidden;
 }
 
+/* hero background video (experimental: revert by removing the <video> in index.html) */
+.hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+  filter: blur(6px);
+  transform: scale(1.1) translateZ(0);
+}
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(145deg, rgba(10,10,14,0.78), rgba(42,6,8,0.6) 60%, rgba(10,10,14,0.78));
+}
+
 .halftone {
   position: absolute;
   background-image: radial-gradient(var(--red) 1.4px, transparent 1.6px);
