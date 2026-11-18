@@ -10,19 +10,65 @@ const onScroll = () => {
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
 
-// ===== Mobile nav toggle =====
+if (window.gsap) {
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  if (window.ScrollToPlugin) gsap.registerPlugin(ScrollToPlugin);
+}
+
+// ===== Mobile menu: circular reveal from the toggle, links rise in one by one =====
 const navToggle = document.getElementById('navToggle');
-const navLinks = document.getElementById('navLinks');
-if (navToggle) {
-  navToggle.addEventListener('click', () => {
-    navLinks.classList.toggle('open');
-    navToggle.classList.toggle('active');
+const mobileMenu = document.getElementById('mobileMenu');
+let menuOpen = false;
+let menuTl = null;
+
+function buildMenuTimeline() {
+  // the circle grows out of the hamburger button, wherever it sits
+  const r = navToggle.getBoundingClientRect();
+  const at = `at ${Math.round(r.left + r.width / 2)}px ${Math.round(r.top + r.height / 2)}px`;
+  const labels = mobileMenu.querySelectorAll('.mm-inner');
+  const foot = mobileMenu.querySelector('.mobile-menu-foot');
+
+  return gsap
+    .timeline({ paused: true })
+    .set(mobileMenu, { visibility: 'visible' })
+    .fromTo(
+      mobileMenu,
+      { clipPath: `circle(0px ${at})` },
+      { clipPath: `circle(${Math.hypot(window.innerWidth, window.innerHeight) * 1.05}px ${at})`, duration: 0.75, ease: 'power3.inOut' }
+    )
+    .fromTo(labels, { yPercent: 115, rotate: 4 }, { yPercent: 0, rotate: 0, duration: 0.6, ease: 'power3.out', stagger: 0.055 }, 0.32)
+    .fromTo(foot, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.45, ease: 'power2.out' }, 0.62);
+}
+
+function setMenu(open) {
+  if (!navToggle || !mobileMenu || !window.gsap || open === menuOpen) return;
+  menuOpen = open;
+  if (!menuTl) menuTl = buildMenuTimeline();
+
+  navToggle.classList.toggle('active', open);
+  navToggle.setAttribute('aria-expanded', String(open));
+  navToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  mobileMenu.setAttribute('aria-hidden', String(!open));
+  document.getElementById('navbar').classList.toggle('menu-open', open);
+  document.documentElement.style.overflow = open ? 'hidden' : '';
+
+  if (open) menuTl.timeScale(1).play();
+  else menuTl.timeScale(1.35).reverse();
+}
+
+if (navToggle && mobileMenu) {
+  navToggle.addEventListener('click', () => setMenu(!menuOpen));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setMenu(false);
   });
-  navLinks.querySelectorAll('a').forEach((link) => {
-    link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      navToggle.classList.remove('active');
-    });
+  // the reveal origin depends on the layout, so rebuild it after a resize/rotation
+  window.addEventListener('resize', () => {
+    if (window.matchMedia('(min-width: 761px)').matches) setMenu(false);
+    if (!menuOpen && menuTl) {
+      menuTl.kill();
+      menuTl = null;
+      gsap.set(mobileMenu, { visibility: 'hidden', clearProps: 'clipPath' });
+    }
   });
 }
 
@@ -148,8 +194,6 @@ const flyVideo = document.getElementById('flyVideo');
 const isPhone = window.matchMedia('(max-width: 760px)').matches;
 
 if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger) {
-  gsap.registerPlugin(ScrollTrigger);
-
   // anchor Iron Man (and his trail ghost) on their own center
   gsap.set([flyIronman, flyIronmanTrail].filter(Boolean), { xPercent: -50, yPercent: -50 });
 
@@ -238,4 +282,125 @@ if (flyVideo) {
       flyVideo.play().catch(() => {});
     }, 3000);
   });
+}
+
+// ===== Nav: smooth scroll to sections + highlight the section you're in =====
+const SECTION_IDS = ['hero', 'sports', 'food', 'itinerary', 'team', 'disclaimer'];
+const navAnchors = Array.from(document.querySelectorAll('.nav-links a, .mobile-menu-links a'));
+let sectionTops = {};
+let navScrolling = false;
+
+// Sticky sections report their "stuck" position, so measure each one as if it were
+// in normal flow to get the scroll position where it actually starts.
+function naturalTop(el) {
+  const inline = el.style.position;
+  el.style.position = 'relative';
+  const top = el.getBoundingClientRect().top + window.scrollY;
+  el.style.position = inline;
+  return Math.round(top);
+}
+
+function measureSections() {
+  sectionTops = {};
+  SECTION_IDS.forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) sectionTops[id] = naturalTop(el);
+  });
+}
+
+function scrollTargetFor(id) {
+  const el = document.getElementById(id);
+  if (!el) return null;
+  const top = sectionTops[id] ?? naturalTop(el);
+  // desktop food scene: land at the end of the Iron Man fly-in, where the menu is fully shown
+  if (id === 'food' && !isPhone && flyIronman) return top + el.offsetHeight - window.innerHeight;
+  return top;
+}
+
+function setActiveNav(id) {
+  navAnchors.forEach((a) => a.classList.toggle('active', a.getAttribute('href') === `#${id}`));
+}
+
+function updateActiveNav() {
+  if (navScrolling) return;
+  const probe = window.scrollY + window.innerHeight * 0.45;
+  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  let current = SECTION_IDS[0];
+  SECTION_IDS.forEach((id) => {
+    if (sectionTops[id] !== undefined && sectionTops[id] <= probe) current = id;
+  });
+  if (atBottom) current = SECTION_IDS[SECTION_IDS.length - 1];
+  setActiveNav(current);
+}
+
+function goToSection(id) {
+  const target = scrollTargetFor(id);
+  if (target === null) return;
+  setActiveNav(id);
+
+  if (window.gsap && window.ScrollToPlugin) {
+    const distance = Math.abs(window.scrollY - target);
+    navScrolling = true;
+    gsap.to(window, {
+      scrollTo: { y: target, autoKill: true },
+      duration: Math.min(1.6, Math.max(0.7, distance / 2600)),
+      ease: 'power3.inOut',
+      overwrite: true,
+      onComplete: () => { navScrolling = false; updateActiveNav(); },
+      onInterrupt: () => { navScrolling = false; },
+    });
+  } else {
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  }
+}
+
+// every in-page link (nav, mobile menu, hero buttons, footer) goes through the same smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach((link) => {
+  link.addEventListener('click', (e) => {
+    const id = link.getAttribute('href').slice(1);
+    if (!document.getElementById(id)) return;
+    e.preventDefault();
+    if (menuOpen) setMenu(false);
+    goToSection(id);
+  });
+});
+
+measureSections();
+updateActiveNav();
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+window.addEventListener('resize', () => { measureSections(); updateActiveNav(); });
+window.addEventListener('load', () => { measureSections(); updateActiveNav(); });
+
+// ===== Reveal on scroll for the itinerary, squad, rules and footer =====
+if (window.gsap && window.ScrollTrigger) {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const reveals = gsap.utils.toArray('.reveal');
+
+  if (!reduceMotion && reveals.length) {
+    gsap.set(reveals, { opacity: 0, y: 40 });
+    ScrollTrigger.batch(reveals, {
+      start: 'top 88%',
+      once: true,
+      onEnter: (batch) =>
+        gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.09, overwrite: true }),
+    });
+  }
+
+  // the timeline line fills in red as you scroll, and each stop lights up as the line reaches it
+  const timelineProgress = document.getElementById('timelineProgress');
+  if (timelineProgress) {
+    gsap.to(timelineProgress, {
+      scaleY: 1,
+      ease: 'none',
+      scrollTrigger: { trigger: '.timeline', start: 'top 65%', end: 'bottom 65%', scrub: 0.4 },
+    });
+    gsap.utils.toArray('.timeline-item').forEach((item) => {
+      ScrollTrigger.create({
+        trigger: item,
+        start: 'top 65%',
+        onEnter: () => item.classList.add('is-lit'),
+        onLeaveBack: () => item.classList.remove('is-lit'),
+      });
+    });
+  }
 }

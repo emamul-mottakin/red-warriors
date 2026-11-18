@@ -33,11 +33,27 @@
       <a href="#disclaimer">Rules</a>
     </nav>
 
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
+
+<!-- ===== MOBILE MENU (phones only; lives outside the navbar so it can cover the full screen) ===== -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+  <nav class="mobile-menu-links" aria-label="Mobile">
+    <a href="#hero" class="active"><span class="mm-inner"><span class="mm-num">01</span><span class="mm-label">Home</span></span></a>
+    <a href="#sports"><span class="mm-inner"><span class="mm-num">02</span><span class="mm-label">Sports</span></span></a>
+    <a href="#food"><span class="mm-inner"><span class="mm-num">03</span><span class="mm-label">Food</span></span></a>
+    <a href="#itinerary"><span class="mm-inner"><span class="mm-num">04</span><span class="mm-label">Itinerary</span></span></a>
+    <a href="#team"><span class="mm-inner"><span class="mm-num">05</span><span class="mm-label">Squad</span></span></a>
+    <a href="#disclaimer"><span class="mm-inner"><span class="mm-num">06</span><span class="mm-label">Rules</span></span></a>
+  </nav>
+  <div class="mobile-menu-foot">
+    <span class="eyebrow-dot"></span>
+    <span>Monthly Outing &bull; 22 November 2026</span>
+  </div>
+</div>
 
 <!-- ===== HERO ===== -->
 <section class="hero" id="hero">
@@ -287,8 +303,252 @@
   </div>
 </section>
 
+<!-- ===== ITINERARY ===== -->
+<section class="section section--cream itinerary" id="itinerary">
+  <div class="section-inner">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Mission Timeline</p>
+      <h2 class="section-title">The Itinerary</h2>
+      <p class="section-sub">22 November 2026. One day, one squad, zero chill. Here's how it plays out.</p>
+    </header>
+
+    <div class="timeline">
+      <div class="timeline-track"><div class="timeline-progress" id="timelineProgress"></div></div>
+
+      <ol class="timeline-list">
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card reveal">
+            <div class="timeline-meta"><span class="timeline-time">07:30 AM</span><span class="timeline-tag">Squad</span></div>
+            <h3>Assemble At Base</h3>
+            <p>Roll call at the office. Jerseys on, bags packed, and we roll out together.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card reveal">
+            <div class="timeline-meta"><span class="timeline-time">08:30 AM</span><span class="timeline-tag">Food</span></div>
+            <h3>Breakfast</h3>
+            <p>Hero fuel before the battles begin. Eat well, you'll need it.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card reveal">
+            <div class="timeline-meta"><span class="timeline-time">09:30 AM</span><span class="timeline-tag">Squad</span></div>
+            <h3>Opening &amp; Team Photos</h3>
+            <p>Kick-off huddle, team photos and the photobooth before the first whistle.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card timeline-card--sport reveal">
+            <div class="timeline-meta"><span class="timeline-time">10:00 AM</span><span class="timeline-tag">&#127934; Cricket</span></div>
+            <h3>Cricket Showdown</h3>
+            <p>Red Warriors vs The Falcons, The Wolves vs Golden Tigers.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card timeline-card--sport reveal">
+            <div class="timeline-meta"><span class="timeline-time">12:00 PM</span><span class="timeline-tag">&#9917; Football</span></div>
+            <h3>Football Clash</h3>
+            <p>Fast games, loud sidelines. Bring the energy.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card reveal">
+            <div class="timeline-meta"><span class="timeline-time">01:30 PM</span><span class="timeline-tag">Food</span></div>
+            <h3>Lunch Break</h3>
+            <p>Refuel, regroup and trade some trash talk.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card timeline-card--sport reveal">
+            <div class="timeline-meta"><span class="timeline-time">02:30 PM</span><span class="timeline-tag">&#127936; Volleyball</span></div>
+            <h3>Volleyball Rally</h3>
+            <p>Spikes, dives and a lot of shouting "mine!".</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card timeline-card--sport reveal">
+            <div class="timeline-meta"><span class="timeline-time">03:30 PM</span><span class="timeline-tag">&#127919; Short Game</span></div>
+            <h3>The Short Game</h3>
+            <p>Format revealed on the day. Expect chaos.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card timeline-card--highlight reveal">
+            <div class="timeline-meta"><span class="timeline-time">04:30 PM</span><span class="timeline-tag">&#127942; Awards</span></div>
+            <h3>Awards &amp; Closing</h3>
+            <p>Trophies, shout-outs and the final squad photo.</p>
+          </div>
+        </li>
+        <li class="timeline-item">
+          <span class="timeline-dot"></span>
+          <div class="timeline-card reveal">
+            <div class="timeline-meta"><span class="timeline-time">05:30 PM</span><span class="timeline-tag">Squad</span></div>
+            <h3>Head Home</h3>
+            <p>Mission complete. Rest up, warriors.</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SQUAD ===== -->
+<section class="section section--dark squad" id="team">
+  <div class="section-inner">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>The Roster</p>
+      <h2 class="section-title">Meet The Squad</h2>
+      <p class="section-sub">Every hero has a role. Here's who keeps the Red Warriors running.</p>
+    </header>
+
+    <div class="squad-grid">
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/captain-america.png" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Team Captain</span>
+          <h3 class="squad-name">Captain America</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/iron-man.png" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Game Strategist</span>
+          <h3 class="squad-name">Iron Man</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/spider-man.png" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Vibe Setter</span>
+          <h3 class="squad-name">Spider-Man</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/hulk.webp" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Snack Commander</span>
+          <h3 class="squad-name">Hulk</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/thor.png" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Hype Engine</span>
+          <h3 class="squad-name">Thor</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+      <article class="squad-card reveal">
+        <img src="assets/images/hero-carousel/black-widow.png" alt="" loading="lazy">
+        <div class="squad-info">
+          <span class="squad-role">Event Planner</span>
+          <h3 class="squad-name">Black Widow</h3>
+          <p class="squad-alias">Player name coming soon</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RULES ===== -->
+<section class="section section--cream rules" id="disclaimer">
+  <div class="section-inner">
+    <header class="section-head reveal">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Read Before You Play</p>
+      <h2 class="section-title">House Rules</h2>
+      <p class="section-sub">A few simple rules so everyone has a great day.</p>
+    </header>
+
+    <div class="rules-grid">
+      <article class="rule-card reveal">
+        <span class="rule-num">01</span>
+        <h3>Be On Time</h3>
+        <p>We roll out at 07:30 AM sharp. Heroes don't keep the squad waiting.</p>
+      </article>
+      <article class="rule-card reveal">
+        <span class="rule-num">02</span>
+        <h3>Wear Your Colors</h3>
+        <p>Team jerseys on all day. Show everyone which side you're on.</p>
+      </article>
+      <article class="rule-card reveal">
+        <span class="rule-num">03</span>
+        <h3>Play Fair, Play Hard</h3>
+        <p>Compete with everything you've got. The referee's call is final.</p>
+      </article>
+      <article class="rule-card reveal">
+        <span class="rule-num">04</span>
+        <h3>Stay Hydrated</h3>
+        <p>Drink water between games. Even Thor takes a break.</p>
+      </article>
+      <article class="rule-card reveal">
+        <span class="rule-num">05</span>
+        <h3>No One Left Behind</h3>
+        <p>Look out for your teammates on and off the field.</p>
+      </article>
+      <article class="rule-card reveal">
+        <span class="rule-num">06</span>
+        <h3>Have Fun</h3>
+        <p>It's an outing, not the Avengers final. Enjoy the day.</p>
+      </article>
+    </div>
+
+    <div class="disclaimer-box reveal">
+      <span class="disclaimer-icon">&#9888;&#65039;</span>
+      <div>
+        <h3>Disclaimer</h3>
+        <p>Taking part in any sport is optional. Play within your limits and tell an organizer if you feel unwell or get hurt. Please keep track of your own belongings. The schedule may change on the day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-cta reveal">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>See You On The Field</p>
+      <h2 class="footer-title">Warriors, <span class="footer-pop">Assemble</span></h2>
+      <p class="footer-date">Monthly Outing &bull; 22 November 2026</p>
+    </div>
+
+    <div class="footer-bar">
+      <a href="#hero" class="brand">
+        <span class="brand-mark"><img src="assets/images/red-warriors-logo.png" alt="Red Warriors crest" class="brand-logo"></span>
+        <span class="brand-text">RED<span>WARRIORS</span></span>
+      </a>
+      <nav class="footer-links" aria-label="Footer">
+        <a href="#sports">Sports</a>
+        <a href="#food">Food</a>
+        <a href="#itinerary">Itinerary</a>
+        <a href="#team">Squad</a>
+        <a href="#disclaimer">Rules</a>
+      </nav>
+      <a href="#hero" class="back-top" aria-label="Back to top">
+        <span>Back to top</span>
+        <svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 7.5 20 15.5 18.6 16.9 12 10.3 5.4 16.9 4 15.5z"/></svg>
+      </a>
+    </div>
+
+    <p class="footer-copy">&copy; 2026 Red Warriors. Made with <span class="fire">&#128293;</span> for the squad.</p>
+  </div>
+</footer>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
 <script src="js/script.js"></script>
 </body>
 </html>
