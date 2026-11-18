@@ -6,12 +6,25 @@
 <title>Red Warriors &mdash; Annual Team Outing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Oswald:wght@400;500;600;700&family=Barlow+Condensed:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/Sakana.woff2" as="font" type="font/woff2" crossorigin>
+<script>
+/* Lite mode: low-memory or low-core devices, Data Saver, slow networks, reduced motion, or ?lite=1 */
+(function () {
+  var n = navigator, c = n.connection || {}, m = n.deviceMemory, h = n.hardwareConcurrency;
+  var lite = /[?&]lite=1/.test(location.search) ||
+    (m && m <= 2) || (h && h <= 2) || (m && m <= 4 && h && h <= 4) ||
+    c.saveData || /(^|-)2g$/.test(c.effectiveType || '') ||
+    (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (lite) document.documentElement.classList.add('lite');
+})();
+</script>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<div class="noise-overlay"></div>
 <div class="vignette"></div>
 
 <!-- ===== NAV ===== -->
@@ -19,7 +32,7 @@
   <div class="nav-inner">
     <a href="#hero" class="brand">
       <span class="brand-mark">
-        <img src="assets/images/red-warriors-logo.png" alt="Red Warriors crest" class="brand-logo">
+        <img decoding="async" src="assets/images/red-warriors-logo.webp" alt="Red Warriors crest" class="brand-logo">
       </span>
       <span class="brand-text">RED<span>WARRIORS</span></span>
     </a>
@@ -31,6 +44,7 @@
       <a href="#itinerary">Itinerary</a>
       <a href="#team">Squad</a>
       <a href="#disclaimer">Rules</a>
+      <a href="vehicles.html">Vehicles</a>
     </nav>
 
     <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
@@ -48,6 +62,7 @@
     <a href="#itinerary"><span class="mm-inner"><span class="mm-num">04</span><span class="mm-label">Itinerary</span></span></a>
     <a href="#team"><span class="mm-inner"><span class="mm-num">05</span><span class="mm-label">Squad</span></span></a>
     <a href="#disclaimer"><span class="mm-inner"><span class="mm-num">06</span><span class="mm-label">Rules</span></span></a>
+    <a href="vehicles.html"><span class="mm-inner"><span class="mm-num">07</span><span class="mm-label">Vehicles</span></span></a>
   </nav>
   <div class="mobile-menu-foot">
     <span class="eyebrow-dot"></span>
@@ -60,12 +75,10 @@
 
   <!-- background texture layers -->
   <div class="hero-bg">
-    <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="assets/images/food-bg.jpg" aria-hidden="true">
-      <source src="assets/videos/food-bg.mp4" type="video/mp4">
+    <video class="hero-video" autoplay muted loop playsinline preload="none" poster="assets/images/hero-poster.webp" aria-hidden="true">
+      <source data-src="assets/videos/hero-bg.mp4" type="video/mp4">
     </video>
     <div class="hero-video-overlay"></div>
-    <div class="halftone halftone--a"></div>
-    <div class="halftone halftone--b"></div>
     <div class="beam"></div>
     <svg class="web-corner web-corner--tl" viewBox="0 0 400 400" aria-hidden="true">
       <g stroke="currentColor" stroke-width="1" fill="none" opacity="0.5">
@@ -105,7 +118,11 @@
           <span>See The Itinerary</span>
           <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M5 12h12.17l-4.88-4.88L13.71 5l8 8-8 8-1.42-1.41 4.88-4.88H5z"/></svg>
         </a>
-        <a href="#team" class="btn btn-ghost">Meet The Squad</a>
+        <!-- opens the vehicle allocation page (which also has the PDF download) -->
+        <a href="vehicles.html" class="btn btn-ghost btn-download">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M18.92 6.01A1.5 1.5 0 0 0 17.5 5h-11a1.5 1.5 0 0 0-1.42 1.01L3 12v8a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-1h12v1a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-8zM6.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m11 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M5 11l1.5-4.5h11L19 11z"/></svg>
+          Vehicle Allocation
+        </a>
       </div>
     </div>
 
@@ -116,12 +133,12 @@
 
   <!-- superhero carousel: full-height layer anchored to the bottom-right of the screen -->
   <div class="hero-carousel" id="heroCarousel" aria-label="Red Warriors heroes">
-    <div class="hero-slide"><img src="assets/images/hero-carousel/spider-man.png" alt="Spider-Man" loading="eager"></div>
-    <div class="hero-slide"><img src="assets/images/hero-carousel/iron-man.png" alt="Iron Man" loading="eager"></div>
-    <div class="hero-slide"><img src="assets/images/hero-carousel/thor.png" alt="Thor" loading="eager"></div>
-    <div class="hero-slide"><img src="assets/images/hero-carousel/captain-america.png" alt="Captain America" loading="eager"></div>
-    <div class="hero-slide"><img src="assets/images/hero-carousel/hulk.webp" alt="Hulk" loading="eager"></div>
-    <div class="hero-slide"><img src="assets/images/hero-carousel/black-widow.png" alt="Black Widow" loading="eager"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/spider-man.webp" alt="Spider-Man" loading="eager"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/iron-man.webp" alt="Iron Man" loading="eager" fetchpriority="high"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/thor.webp" alt="Thor" loading="lazy"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/captain-america.webp" alt="Captain America" loading="lazy"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/hulk.webp" alt="Hulk" loading="lazy"></div>
+    <div class="hero-slide"><img decoding="async" src="assets/images/hero-carousel/black-widow.webp" alt="Black Widow" loading="lazy"></div>
   </div>
 
   <div class="hero-footer">
@@ -137,13 +154,13 @@
 <section class="sports" id="sports">
   <div class="arena-bg" aria-hidden="true">
     <div class="arena-portal">
-      <img class="arena-disc" src="assets/images/arena/cream-disc.webp" alt="">
-      <img class="arena-ring arena-ring--back" src="assets/images/arena/portal-ring.webp" alt="">
-      <img class="arena-ring" src="assets/images/arena/portal-ring.webp" alt="">
+      <img decoding="async" loading="lazy" class="arena-disc" src="assets/images/arena/cream-disc.webp" alt="">
+      <img decoding="async" loading="lazy" class="arena-ring arena-ring--back" src="assets/images/arena/portal-ring.webp" alt="">
+      <img decoding="async" loading="lazy" class="arena-ring" src="assets/images/arena/portal-ring.webp" alt="">
     </div>
     <div class="arena-shade"></div>
   </div>
-  <img class="arena-hero" src="assets/images/arena/doctor-strange.png" alt="" aria-hidden="true">
+  <img decoding="async" loading="lazy" class="arena-hero" src="assets/images/arena/doctor-strange.webp" alt="" aria-hidden="true">
   <div class="sports-inner">
 
     <header class="sports-head">
@@ -164,13 +181,13 @@
       <div class="fixture-list">
         <div class="fixture">
           <article class="team-card team-card--red">
-            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/iron-man.webp" alt="Iron Man" loading="lazy"></div>
             <h4 class="team-card-name">Red Warriors</h4>
             <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--blue">
-            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thor.webp" alt="Thor" loading="lazy"></div>
             <h4 class="team-card-name">The Falcons</h4>
             <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
           </article>
@@ -178,13 +195,13 @@
 
         <div class="fixture">
           <article class="team-card team-card--white">
-            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/black-panther.webp" alt="Black Panther" loading="lazy"></div>
             <h4 class="team-card-name">The Wolves</h4>
             <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--gold">
-            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thanos.webp" alt="Thanos" loading="lazy"></div>
             <h4 class="team-card-name">Golden Tigers</h4>
             <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
           </article>
@@ -196,13 +213,13 @@
       <div class="fixture-list">
         <div class="fixture">
           <article class="team-card team-card--red">
-            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/iron-man.webp" alt="Iron Man" loading="lazy"></div>
             <h4 class="team-card-name">Red Warriors</h4>
             <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--gold">
-            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thanos.webp" alt="Thanos" loading="lazy"></div>
             <h4 class="team-card-name">Golden Tigers</h4>
             <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
           </article>
@@ -210,13 +227,13 @@
 
         <div class="fixture">
           <article class="team-card team-card--white">
-            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/black-panther.webp" alt="Black Panther" loading="lazy"></div>
             <h4 class="team-card-name">The Wolves</h4>
             <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--blue">
-            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thor.webp" alt="Thor" loading="lazy"></div>
             <h4 class="team-card-name">The Falcons</h4>
             <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
           </article>
@@ -228,13 +245,13 @@
       <div class="fixture-list">
         <div class="fixture">
           <article class="team-card team-card--red">
-            <div class="team-card-photo"><img src="assets/images/heroes/iron-man.png" alt="Iron Man" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/iron-man.webp" alt="Iron Man" loading="lazy"></div>
             <h4 class="team-card-name">Red Warriors</h4>
             <p class="team-card-quote">&ldquo;I am Iron Man.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--white">
-            <div class="team-card-photo"><img src="assets/images/heroes/black-panther.png" alt="Black Panther" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/black-panther.webp" alt="Black Panther" loading="lazy"></div>
             <h4 class="team-card-name">The Wolves</h4>
             <p class="team-card-quote">&ldquo;Wakanda forever.&rdquo;</p>
           </article>
@@ -242,13 +259,13 @@
 
         <div class="fixture">
           <article class="team-card team-card--gold">
-            <div class="team-card-photo"><img src="assets/images/heroes/thanos.png" alt="Thanos" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thanos.webp" alt="Thanos" loading="lazy"></div>
             <h4 class="team-card-name">Golden Tigers</h4>
             <p class="team-card-quote">&ldquo;I'm&hellip; unknown.&rdquo;</p>
           </article>
           <div class="vs-badge"><span>VS</span></div>
           <article class="team-card team-card--blue">
-            <div class="team-card-photo"><img src="assets/images/heroes/thor.png" alt="Thor" loading="lazy"></div>
+            <div class="team-card-photo"><img decoding="async" src="assets/images/heroes/thor.webp" alt="Thor" loading="lazy"></div>
             <h4 class="team-card-name">The Falcons</h4>
             <p class="team-card-quote">&ldquo;Thor, Son of Odin.&rdquo;</p>
           </article>
@@ -272,139 +289,238 @@
 <section class="fly-transition" id="food">
   <div class="fly-sticky">
     <div class="fly-bg" id="flyBg">
-      <video class="fly-video" id="flyVideo" muted playsinline poster="assets/images/food-bg.jpg">
-        <source src="assets/videos/food-bg.mp4" type="video/mp4">
-      </video>
+      <img decoding="async" loading="lazy" class="fly-image" id="flyImage" src="assets/images/food-marvel-bg.webp" alt="" aria-hidden="true">
+      <img decoding="async" loading="lazy" class="fly-image fly-image--blur" id="flyImageBlur" src="assets/images/food-marvel-bg-blur.webp" alt="" aria-hidden="true">
       <div class="fly-video-overlay"></div>
       <div class="fly-glow"></div>
+      <div class="fly-tint" id="flyTint"></div>
     </div>
     <div class="fly-flash" id="flyFlash"></div>
-    <img src="assets/images/heroes/iron-man-flying.png" alt="" aria-hidden="true" class="fly-ironman fly-ironman-trail" id="flyIronmanTrail">
-    <img src="assets/images/heroes/iron-man-flying.png" alt="Iron Man flying in" class="fly-ironman" id="flyIronman">
+    <img decoding="async" loading="lazy" src="assets/images/heroes/iron-man-flying.webp" alt="" aria-hidden="true" class="fly-ironman fly-ironman-trail" id="flyIronmanTrail">
+    <img decoding="async" loading="lazy" src="assets/images/heroes/iron-man-flying.webp" alt="Iron Man flying in" class="fly-ironman" id="flyIronman">
     <div class="food-reveal" id="foodReveal">
       <p class="eyebrow"><span class="eyebrow-dot"></span>Hero Fuel</p>
       <h2 class="food-title">Breakfast &amp; Lunch</h2>
       <p class="food-sub">Fast, filling, and ready before kickoff.</p>
 
       <div class="food-cards">
-        <div class="food-card">
-          <span class="food-card-icon">&#127869;</span>
-          <h3>Breakfast</h3>
-          <ul>
-            <li>Paratha &amp; egg bhurji</li>
-            <li>Fresh seasonal fruit</li>
-            <li>Tea, coffee &amp; juice</li>
-          </ul>
-          <p class="food-note">Sample menu &mdash; final spread confirmed soon.</p>
-        </div>
-        <div class="food-card">
-          <span class="food-card-icon">&#127836;</span>
-          <h3>Lunch</h3>
-          <ul>
-            <li>Chicken &amp; veg biryani</li>
-            <li>Mixed salad &amp; raita</li>
-            <li>Dessert &amp; cold drinks</li>
-          </ul>
-          <p class="food-note">Sample menu &mdash; final spread confirmed soon.</p>
-        </div>
+        <!-- To add a photo: put <img decoding="async" class="food-photo-img" src="assets/images/food/..." alt="..."> inside .food-photo -->
+        <article class="food-card">
+          <div class="food-photo">
+            <div class="food-photo-placeholder" aria-hidden="true"><span>&#127859;</span>Photo coming soon</div>
+            <span class="food-meal">Breakfast</span>
+            <span class="food-time">08:15 AM</span>
+          </div>
+          <div class="food-body">
+            <span class="food-num" aria-hidden="true">01</span>
+            <h3 class="food-name">Paratha Power Plate</h3>
+            <p class="food-desc">Flaky, ghee-layered parathas with spiced egg bhurji, a side of fresh seasonal fruit and a hot cup of masala tea.</p>
+            <ul class="food-tags">
+              <li>Whole wheat</li>
+              <li>Free-range eggs</li>
+              <li>Green chilli</li>
+              <li>Pure ghee</li>
+            </ul>
+          </div>
+        </article>
+        <article class="food-card">
+          <div class="food-photo">
+            <div class="food-photo-placeholder" aria-hidden="true"><span>&#127835;</span>Photo coming soon</div>
+            <span class="food-meal">Lunch</span>
+            <span class="food-time">01:00 PM</span>
+          </div>
+          <div class="food-body">
+            <span class="food-num" aria-hidden="true">02</span>
+            <h3 class="food-name">Avengers Kacchi Biryani</h3>
+            <p class="food-desc">Slow-cooked basmati layered with tender chicken, saffron and crispy fried onions, served with cool raita and a cold drink.</p>
+            <ul class="food-tags">
+              <li>Basmati rice</li>
+              <li>Chicken</li>
+              <li>Saffron</li>
+              <li>Cucumber raita</li>
+            </ul>
+          </div>
+        </article>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ===== ITINERARY ===== -->
-<section class="section section--cream itinerary" id="itinerary">
-  <div class="section-inner">
-    <header class="section-head reveal">
-      <p class="eyebrow"><span class="eyebrow-dot"></span>Mission Timeline</p>
-      <h2 class="section-title">The Itinerary</h2>
-      <p class="section-sub">22 November 2026. One day, one squad, zero chill. Here's how it plays out.</p>
+<section class="itinerary" id="itinerary">
+  <div class="itin-pin">
+    <div class="itin-bg" aria-hidden="true">
+      <span class="itin-ghost" id="itinGhost">22 &middot; 11 &middot; 2026 &mdash; Mission Day &mdash; 22 &middot; 11 &middot; 2026</span>
+      <span class="itin-orb itin-orb--a"></span>
+      <span class="itin-orb itin-orb--b"></span>
+      <svg class="itin-mandala" id="itinMandala" viewBox="-500 -500 1000 1000" aria-hidden="true">
+        <defs><path id="runePath" d="M 0,-432 a 432,432 0 1,1 0,864 a 432,432 0 1,1 0,-864"/></defs>
+        <g class="mandala-outer">
+          <circle r="492"/><circle r="478" class="m-faint"/>
+          <circle r="462" class="m-ticks"/>
+          <text class="m-runes"><textPath href="#runePath">Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · Ω · Δ · Σ · Ψ · Φ · Λ · Ξ · Θ · </textPath></text>
+          <circle r="404"/><circle r="396" class="m-faint"/>
+          <rect x="-283" y="-283" width="566" height="566"/>
+          <rect x="-283" y="-283" width="566" height="566" transform="rotate(45)"/>
+        </g>
+        <g class="mandala-inner">
+          <circle r="283"/>
+          <polygon points="0.0,-283.0 245.1,141.5 -245.1,141.5"/><polygon points="0.0,283.0 -245.1,-141.5 245.1,-141.5"/>
+          <g class="m-faint"><line x1="186.0" y1="0.0" x2="283.0" y2="0.0"/><line x1="179.7" y1="48.1" x2="273.4" y2="73.2"/><line x1="161.1" y1="93.0" x2="245.1" y2="141.5"/><line x1="131.5" y1="131.5" x2="200.1" y2="200.1"/><line x1="93.0" y1="161.1" x2="141.5" y2="245.1"/><line x1="48.1" y1="179.7" x2="73.2" y2="273.4"/><line x1="0.0" y1="186.0" x2="0.0" y2="283.0"/><line x1="-48.1" y1="179.7" x2="-73.2" y2="273.4"/><line x1="-93.0" y1="161.1" x2="-141.5" y2="245.1"/><line x1="-131.5" y1="131.5" x2="-200.1" y2="200.1"/><line x1="-161.1" y1="93.0" x2="-245.1" y2="141.5"/><line x1="-179.7" y1="48.1" x2="-273.4" y2="73.2"/><line x1="-186.0" y1="0.0" x2="-283.0" y2="0.0"/><line x1="-179.7" y1="-48.1" x2="-273.4" y2="-73.2"/><line x1="-161.1" y1="-93.0" x2="-245.1" y2="-141.5"/><line x1="-131.5" y1="-131.5" x2="-200.1" y2="-200.1"/><line x1="-93.0" y1="-161.1" x2="-141.5" y2="-245.1"/><line x1="-48.1" y1="-179.7" x2="-73.2" y2="-273.4"/><line x1="-0.0" y1="-186.0" x2="-0.0" y2="-283.0"/><line x1="48.1" y1="-179.7" x2="73.2" y2="-273.4"/><line x1="93.0" y1="-161.1" x2="141.5" y2="-245.1"/><line x1="131.5" y1="-131.5" x2="200.1" y2="-200.1"/><line x1="161.1" y1="-93.0" x2="245.1" y2="-141.5"/><line x1="179.7" y1="-48.1" x2="273.4" y2="-73.2"/></g>
+          <circle r="186" class="m-dash"/>
+          <circle r="140"/>
+          <circle r="96" class="m-ticks m-ticks--fine"/>
+          <circle r="58"/>
+        </g>
+      </svg>
+    </div>
+
+    <header class="itin-head">
+      <div class="itin-head-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>Bend The Timeline</p>
+        <h2 class="itin-title">The Itinerary</h2>
+        <p class="itin-sub">22 November 2026. One day, one squad, zero chill. Scroll to turn back &mdash; and forward &mdash; through time.</p>
+      </div>
+      <div class="itin-clock" aria-live="polite">
+        <svg class="eye-ring" viewBox="-100 -100 200 200" aria-hidden="true">
+          <circle r="96" class="eye-ring-outer"/>
+          <circle r="88" class="eye-ring-ticks"/>
+          <g class="eye-ring-spin"><circle r="78" class="eye-ring-dash"/><polygon points="0.0,-78.0 67.5,39.0 -67.5,39.0"/><polygon points="0.0,78.0 -67.5,-39.0 67.5,-39.0"/></g>
+        </svg>
+        <span class="itin-clock-label">Time Stone</span>
+        <span class="itin-clock-time" id="itinClock">08:00 AM</span>
+        <span class="itin-clock-count"><b id="itinCount">01</b> / 10</span>
+      </div>
     </header>
 
-    <div class="timeline">
-      <div class="timeline-track"><div class="timeline-progress" id="timelineProgress"></div></div>
-
-      <ol class="timeline-list">
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card reveal">
-            <div class="timeline-meta"><span class="timeline-time">07:30 AM</span><span class="timeline-tag">Squad</span></div>
-            <h3>Assemble At Base</h3>
-            <p>Roll call at the office. Jerseys on, bags packed, and we roll out together.</p>
+    <div class="itin-viewport">
+      <ol class="itin-track" id="itinTrack">
+        <li class="mission-card" data-time="08:00 AM">
+          <span class="mc-index" aria-hidden="true">01</span>
+          <div class="mc-top"><span class="mc-num">Stop 01</span><span class="mc-tag">Squad</span></div>
+          <p class="mc-time">08:00<span>AM</span></p>
+          <p class="mc-range">08:00 AM</p>
+          <div class="mc-body">
+            <h3>Entry</h3>
+            <p>Gates open. Check in, grab your jersey and find your squad.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/captain-america.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card reveal">
-            <div class="timeline-meta"><span class="timeline-time">08:30 AM</span><span class="timeline-tag">Food</span></div>
+        <li class="mission-card mission-card--food" data-time="08:15 AM">
+          <span class="mc-index" aria-hidden="true">02</span>
+          <div class="mc-top"><span class="mc-num">Stop 02</span><span class="mc-tag">Food</span></div>
+          <p class="mc-time">08:15<span>AM</span></p>
+          <p class="mc-range">08:15 – 09:00 AM</p>
+          <div class="mc-body">
             <h3>Breakfast</h3>
-            <p>Hero fuel before the battles begin. Eat well, you'll need it.</p>
+            <p>Hero fuel before the battles begin. Eat well, you’ll need it.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/hulk.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card reveal">
-            <div class="timeline-meta"><span class="timeline-time">09:30 AM</span><span class="timeline-tag">Squad</span></div>
-            <h3>Opening &amp; Team Photos</h3>
-            <p>Kick-off huddle, team photos and the photobooth before the first whistle.</p>
+        <li class="mission-card" data-time="09:00 AM">
+          <span class="mc-index" aria-hidden="true">03</span>
+          <div class="mc-top"><span class="mc-num">Stop 03</span><span class="mc-tag">Squad</span></div>
+          <p class="mc-time">09:00<span>AM</span></p>
+          <p class="mc-range">09:00 – 09:10 AM</p>
+          <div class="mc-body">
+            <h3>Warm-Up</h3>
+            <p>Stretch it out, shake it loose. Ten minutes to get game-ready.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/spider-man.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card timeline-card--sport reveal">
-            <div class="timeline-meta"><span class="timeline-time">10:00 AM</span><span class="timeline-tag">&#127934; Cricket</span></div>
+        <li class="mission-card mission-card--sport" data-time="09:15 AM">
+          <span class="mc-index" aria-hidden="true">04</span>
+          <div class="mc-top"><span class="mc-num">Stop 04</span><span class="mc-tag">Short Game</span></div>
+          <p class="mc-time">09:15<span>AM</span></p>
+          <p class="mc-range">09:15 – 09:30 AM</p>
+          <div class="mc-body">
+            <h3>The Short Game</h3>
+            <p>Quick-fire opener. Format revealed on the day — expect chaos.</p>
+          </div>
+          <img decoding="async" class="mc-hero" src="assets/images/heroes/thanos.webp" alt="" loading="lazy">
+        </li>
+        <li class="mission-card mission-card--sport" data-time="09:30 AM">
+          <span class="mc-index" aria-hidden="true">05</span>
+          <div class="mc-top"><span class="mc-num">Stop 05</span><span class="mc-tag">Cricket</span></div>
+          <p class="mc-time">09:30<span>AM</span></p>
+          <p class="mc-range">09:30 AM – 12:30 PM</p>
+          <div class="mc-body">
             <h3>Cricket Showdown</h3>
-            <p>Red Warriors vs The Falcons, The Wolves vs Golden Tigers.</p>
+            <p>Three hours of sixes, catches and sledging. Red Warriors vs the rest.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/thor.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card timeline-card--sport reveal">
-            <div class="timeline-meta"><span class="timeline-time">12:00 PM</span><span class="timeline-tag">&#9917; Football</span></div>
+        <li class="mission-card mission-card--sport" data-time="12:45 PM">
+          <span class="mc-index" aria-hidden="true">06</span>
+          <div class="mc-top"><span class="mc-num">Stop 06</span><span class="mc-tag">Football</span></div>
+          <p class="mc-time">12:45<span>PM</span></p>
+          <p class="mc-range">12:45 – 02:00 PM</p>
+          <div class="mc-body">
             <h3>Football Clash</h3>
             <p>Fast games, loud sidelines. Bring the energy.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/heroes/black-panther.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card reveal">
-            <div class="timeline-meta"><span class="timeline-time">01:30 PM</span><span class="timeline-tag">Food</span></div>
-            <h3>Lunch Break</h3>
+        <li class="mission-card mission-card--food" data-time="01:00 PM">
+          <span class="mc-index" aria-hidden="true">07</span>
+          <div class="mc-top"><span class="mc-num">Stop 07</span><span class="mc-tag">Food</span></div>
+          <p class="mc-time">01:00<span>PM</span></p>
+          <p class="mc-range">01:00 – 03:00 PM</p>
+          <div class="mc-body">
+            <h3>Lunch</h3>
             <p>Refuel, regroup and trade some trash talk.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/iron-man.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card timeline-card--sport reveal">
-            <div class="timeline-meta"><span class="timeline-time">02:30 PM</span><span class="timeline-tag">&#127936; Volleyball</span></div>
+        <li class="mission-card mission-card--sport" data-time="03:00 PM">
+          <span class="mc-index" aria-hidden="true">08</span>
+          <div class="mc-top"><span class="mc-num">Stop 08</span><span class="mc-tag">Volleyball</span></div>
+          <p class="mc-time">03:00<span>PM</span></p>
+          <p class="mc-range">03:00 – 04:15 PM</p>
+          <div class="mc-body">
             <h3>Volleyball Rally</h3>
-            <p>Spikes, dives and a lot of shouting "mine!".</p>
+            <p>Spikes, dives and a lot of shouting “mine!”.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/hero-carousel/black-widow.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card timeline-card--sport reveal">
-            <div class="timeline-meta"><span class="timeline-time">03:30 PM</span><span class="timeline-tag">&#127919; Short Game</span></div>
-            <h3>The Short Game</h3>
-            <p>Format revealed on the day. Expect chaos.</p>
+        <li class="mission-card mission-card--gold" data-time="04:30 PM">
+          <span class="mc-index" aria-hidden="true">09</span>
+          <div class="mc-top"><span class="mc-num">Stop 09</span><span class="mc-tag">Celebration</span></div>
+          <p class="mc-time">04:30<span>PM</span></p>
+          <p class="mc-range">04:30 – 04:45 PM</p>
+          <div class="mc-body">
+            <h3>Birthday Celebration</h3>
+            <p>Cake, candles and a squad-sized happy birthday.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/heroes/thor.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card timeline-card--highlight reveal">
-            <div class="timeline-meta"><span class="timeline-time">04:30 PM</span><span class="timeline-tag">&#127942; Awards</span></div>
-            <h3>Awards &amp; Closing</h3>
-            <p>Trophies, shout-outs and the final squad photo.</p>
+        <li class="mission-card" data-time="05:00 PM">
+          <span class="mc-index" aria-hidden="true">10</span>
+          <div class="mc-top"><span class="mc-num">Stop 10</span><span class="mc-tag">Squad</span></div>
+          <p class="mc-time">05:00<span>PM</span></p>
+          <p class="mc-range">05:00 PM</p>
+          <div class="mc-body">
+            <h3>Departure</h3>
+            <p>Mission complete. Back to the vehicles — rest up, warriors.</p>
           </div>
+          <img decoding="async" class="mc-hero" src="assets/images/heroes/iron-man-flying.webp" alt="" loading="lazy">
         </li>
-        <li class="timeline-item">
-          <span class="timeline-dot"></span>
-          <div class="timeline-card reveal">
-            <div class="timeline-meta"><span class="timeline-time">05:30 PM</span><span class="timeline-tag">Squad</span></div>
-            <h3>Head Home</h3>
-            <p>Mission complete. Rest up, warriors.</p>
-          </div>
-        </li>
+      </ol>
+    </div>
+
+    <div class="itin-rail" aria-hidden="true">
+      <div class="itin-rail-line"><div class="itin-rail-fill" id="itinRailFill"></div></div>
+      <ol class="itin-rail-stops">
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">08:00</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">08:15</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">09:00</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">09:15</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">09:30</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">12:45</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">01:00</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">03:00</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">04:30</span></li>
+        <li class="rail-stop"><span class="rail-dot"></span><span class="rail-time">05:00</span></li>
       </ol>
     </div>
   </div>
@@ -421,7 +537,7 @@
 
     <div class="squad-lead">
       <article class="squad-card squad-card--lead reveal">
-        <img src="assets/images/hero-carousel/captain-america.png" alt="" loading="lazy">
+        <img decoding="async" src="assets/images/hero-carousel/captain-america.webp" alt="" loading="lazy">
         <div class="squad-info">
           <span class="squad-role">Team Owner</span>
           <h3 class="squad-name">Captain America</h3>
@@ -429,7 +545,7 @@
         </div>
       </article>
       <article class="squad-card squad-card--lead reveal">
-        <img src="assets/images/hero-carousel/iron-man.png" alt="" loading="lazy">
+        <img decoding="async" src="assets/images/hero-carousel/iron-man.webp" alt="" loading="lazy">
         <div class="squad-info">
           <span class="squad-role">Team Manager</span>
           <h3 class="squad-name">Iron Man</h3>
@@ -509,7 +625,7 @@
 
     <div class="footer-bar">
       <a href="#hero" class="brand">
-        <span class="brand-mark"><img src="assets/images/red-warriors-logo.png" alt="Red Warriors crest" class="brand-logo"></span>
+        <span class="brand-mark"><img decoding="async" src="assets/images/red-warriors-logo.webp" alt="Red Warriors crest" class="brand-logo"></span>
         <span class="brand-text">RED<span>WARRIORS</span></span>
       </a>
       <nav class="footer-links" aria-label="Footer">
@@ -529,9 +645,10 @@
   </div>
 </footer>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-<script src="js/script.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
+<script defer src="js/script.js"></script>
 </body>
 </html>

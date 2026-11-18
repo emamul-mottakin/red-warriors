@@ -1,0 +1,489 @@
+/* ================= VEHICLE ALLOCATION PAGE =================
+   Each vehicle is an Avengers squad card; colours come from --accent / --accent2 per card. */
+
+.page-vehicles {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(232,35,42,0.22), transparent 70%),
+    linear-gradient(180deg, #0c0506 0%, #08080c 40%, #0a0507 100%);
+  color: var(--paper);
+}
+
+/* phone: a simple "Home" pill instead of the hamburger menu */
+.vx-home-pill {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--white);
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.06);
+}
+
+/* ---------- header ---------- */
+.vx-hero {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(120px, 18vh, 170px) 24px clamp(40px, 6vh, 64px);
+  text-align: center;
+}
+.vx-hero-glow {
+  position: absolute;
+  inset: -20% -10% auto;
+  height: 120%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(232,35,42,0.25), transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(61,123,255,0.18), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(94,224,90,0.1), transparent 45%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+.vx-hero-inner { position: relative; max-width: 860px; margin: 0 auto; }
+.vx-eyebrow { justify-content: center; animation: none; opacity: 1; transform: none; }
+.vx-title {
+  font-family: var(--font-hero);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6vw, 5.4rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+.vx-title span {
+  background: linear-gradient(100deg, #ff6a5a, var(--red) 55%, #ffb347);
+  -webkit-background-clip: text;
+          background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 22px rgba(232,35,42,0.45));
+}
+.vx-sub {
+  max-width: 620px;
+  margin: 0 auto 28px;
+  font-size: clamp(1rem, 0.4vw + 0.9rem, 1.15rem);
+  line-height: 1.55;
+  color: rgba(244,241,232,0.7);
+}
+
+.vx-stats {
+  display: flex;
+  justify-content: center;
+  gap: clamp(12px, 3vw, 40px);
+  margin-bottom: 28px;
+}
+.vx-stat {
+  display: grid;
+  gap: 2px;
+  min-width: 110px;
+  padding: 12px 18px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+.vx-stat b {
+  font-family: var(--font-hero);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 2vw + 1rem, 2.6rem);
+  line-height: 1;
+  color: var(--white);
+}
+.vx-stat span {
+  font-family: var(--font-head);
+  font-size: 0.66rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(244,241,232,0.55);
+}
+
+.vx-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+.vx-actions .btn { opacity: 1; transform: none; animation: none; }
+
+.vx-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: rgba(244,241,232,0.6);
+  transition: border-color .3s ease, box-shadow .3s ease, background .3s ease;
+}
+.vx-search:focus-within {
+  border-color: var(--red);
+  background: rgba(255,255,255,0.09);
+  box-shadow: 0 0 0 4px rgba(232,35,42,0.18), 0 0 30px rgba(232,35,42,0.25);
+}
+.vx-search input {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+}
+.vx-search input::placeholder { color: rgba(244,241,232,0.42); }
+.vx-search-count {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--red);
+  white-space: nowrap;
+}
+
+/* ---------- squads grid ---------- */
+.vx-squads {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 10px 24px 90px;
+}
+.vx-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 32px);
+  align-items: start;
+}
+.vx-card--wide { grid-column: 1 / -1; }
+.vx-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: rgba(244,241,232,0.6);
+  font-size: 1.1rem;
+}
+
+.vx-card {
+  position: relative;
+  border-radius: 26px;
+  overflow: hidden;
+  background: linear-gradient(170deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.45);
+  transition: border-color .4s ease, box-shadow .4s ease, transform .4s cubic-bezier(.22,1,.36,1);
+}
+.vx-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  box-shadow: 0 34px 70px rgba(0,0,0,0.5), 0 0 40px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+/* card header: squad colours, big outlined vehicle number, hero breaking out on the right */
+.vx-card-head {
+  position: relative;
+  isolation: isolate;
+  min-height: 250px;
+  padding: 26px 26px 22px;
+  overflow: hidden;
+}
+.vx-card-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(circle at 85% 70%, color-mix(in srgb, var(--accent) 55%, transparent), transparent 55%),
+    radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--accent2) 22%, transparent), transparent 50%),
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 22%, #0b0709) 0%, #0b0709 70%);
+}
+.vx-card-num {
+  position: absolute;
+  z-index: -1;
+  right: 34%;
+  top: -0.12em;
+  font-family: var(--font-hero);
+  font-size: clamp(7rem, 10vw, 10rem);
+  line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1.5px color-mix(in srgb, var(--accent) 35%, transparent);
+  pointer-events: none;
+}
+.vx-card-hero {
+  position: absolute;
+  z-index: -1;
+  right: -4%;
+  bottom: 0;
+  height: 112%;
+  max-width: 52%;
+  object-fit: contain;
+  object-position: right bottom;
+  filter: drop-shadow(-12px 12px 26px rgba(0,0,0,0.55));
+  transition: transform .8s cubic-bezier(.22,1,.36,1);
+  transform-origin: 70% 100%;
+}
+.vx-card:hover .vx-card-hero { transform: scale(1.05) translateY(-4px); }
+
+.vx-card-info { position: relative; max-width: 62%; }
+.vx-card-label {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent2);
+  margin-bottom: 6px;
+}
+.vx-card-title {
+  font-family: var(--font-hero);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 1.6vw + 1rem, 2.5rem);
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--white);
+  text-shadow: 0 4px 18px rgba(0,0,0,0.5);
+  margin-bottom: 4px;
+}
+.vx-card-hero-name {
+  font-family: var(--font-head);
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.vx-card-tagline {
+  font-size: 0.98rem;
+  line-height: 1.4;
+  color: rgba(244,241,232,0.72);
+  margin-bottom: 16px;
+}
+.vx-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+/* number plate */
+.vx-plate {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 2px;
+  color: #141414;
+  background: linear-gradient(180deg, #ffffff, #e6e6e6);
+  border: 2px solid #141414;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.7), 0 6px 14px rgba(0,0,0,0.4);
+  border-radius: 6px;
+  padding: 4px 12px;
+  white-space: nowrap;
+}
+.vx-card--own .vx-plate { color: #03100a; background: linear-gradient(180deg, #c8ffe0, #3dff8a); border-color: #03100a; }
+.vx-driver {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 10px;
+  border-radius: 12px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: var(--white);
+  font-size: 0.92rem;
+  transition: border-color .3s ease, background .3s ease;
+}
+.vx-driver small {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 0.58rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(244,241,232,0.55);
+}
+.vx-driver svg { color: var(--accent); flex: none; }
+a.vx-driver:hover { border-color: var(--accent); background: rgba(0,0,0,0.5); }
+
+.vx-meter { display: flex; align-items: center; gap: 12px; }
+.vx-meter-bar {
+  flex: 1;
+  max-width: 220px;
+  height: 6px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.12);
+  overflow: hidden;
+}
+.vx-meter-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  box-shadow: 0 0 10px var(--accent);
+}
+.vx-meter-text {
+  font-family: var(--font-head);
+  font-size: 0.72rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(244,241,232,0.7);
+}
+
+/* ---------- rider list ---------- */
+.vx-riders {
+  list-style: none;
+  margin: 0;
+  padding: 8px 14px 16px;
+  display: grid;
+  gap: 2px;
+}
+.vx-card--wide .vx-riders {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+}
+.vx-rider {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: background .25s ease;
+}
+.vx-card--own .vx-rider { grid-template-columns: 34px minmax(0, 1fr) auto; }
+.vx-rider:hover { background: rgba(255,255,255,0.05); }
+.vx-rider + .vx-rider { border-top: 1px solid rgba(255,255,255,0.05); }
+.vx-seat {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 0.78rem;
+  color: rgba(244,241,232,0.4);
+  text-align: center;
+  padding: 4px 0;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.04);
+}
+.vx-who { display: grid; min-width: 0; }
+.vx-name {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.98rem;
+  letter-spacing: 0.3px;
+  color: var(--white);
+}
+.vx-role {
+  font-size: 0.88rem;
+  color: rgba(244,241,232,0.55);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vx-pickup {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.85rem;
+  color: rgba(244,241,232,0.8);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  white-space: nowrap;
+}
+.vx-pickup svg { color: var(--accent); flex: none; }
+.vx-call {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: rgba(244,241,232,0.6);
+  white-space: nowrap;
+  transition: color .25s ease;
+}
+.vx-call svg { color: var(--accent); }
+.vx-call:hover { color: var(--white); }
+
+/* squad lead */
+.vx-rider.is-lead {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 18%, transparent), transparent 80%);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+.vx-rider.is-lead .vx-seat { color: #fff; background: var(--accent); }
+.vx-lead {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.58rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  vertical-align: 2px;
+  color: #1a1206;
+  background: linear-gradient(135deg, #ffe08a, #ffb347);
+}
+
+/* search hit */
+.vx-rider.is-match {
+  background: rgba(232,35,42,0.16);
+  box-shadow: inset 3px 0 0 var(--red), 0 0 0 1px rgba(232,35,42,0.35);
+}
+
+.vx-footer {
+  text-align: center;
+  padding: 30px 20px 50px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  color: rgba(244,241,232,0.5);
+  font-size: 0.92rem;
+}
+.vx-footer-note { margin-top: 6px; font-size: 0.82rem; color: rgba(244,241,232,0.38); }
+
+/* ---------- tablet ---------- */
+@media (max-width: 1080px) {
+  .vx-grid { grid-template-columns: 1fr; }
+  .vx-card--wide .vx-riders { grid-template-columns: 1fr; }
+}
+
+/* ---------- phone ---------- */
+@media (max-width: 760px) {
+  .page-vehicles .nav-links { display: none; }
+  .vx-home-pill { display: inline-flex; }
+  .vx-hero { padding: 104px 16px 30px; }
+  .vx-stats { gap: 8px; }
+  .vx-stat { min-width: 0; flex: 1; padding: 10px 8px; }
+  .vx-stat span { font-size: 0.56rem; letter-spacing: 1px; }
+  .vx-actions { flex-direction: column; gap: 6px; }
+  .vx-squads { padding: 0 12px 60px; }
+  .vx-card-head { min-height: 0; padding: 20px 18px 18px; }
+  .vx-card-info { max-width: 64%; }
+  .vx-card-hero { height: 88%; max-width: 46%; right: -6%; }
+  .vx-card-num { right: 30%; font-size: 6rem; }
+  .vx-card-tagline { font-size: 0.9rem; }
+  .vx-meter-bar { max-width: none; }
+  .vx-riders { padding: 6px 6px 12px; }
+  .vx-rider {
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    grid-template-areas: "seat who call" "seat pickup pickup";
+    row-gap: 6px;
+    column-gap: 10px;
+    padding: 10px 8px;
+  }
+  .vx-card--own .vx-rider { grid-template-areas: "seat who call"; }
+  .vx-seat { grid-area: seat; align-self: start; }
+  .vx-who { grid-area: who; }
+  .vx-pickup { grid-area: pickup; justify-self: start; }
+  .vx-call { grid-area: call; }
+  .vx-call span { display: none; }
+  /* big round tap target: tapping opens the phone dialer with the number filled in */
+  .vx-call {
+    width: 42px;
+    height: 42px;
+    justify-content: center;
+    border-radius: 50%;
+    background: color-mix(in srgb, var(--accent) 18%, rgba(255,255,255,0.04));
+    border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .vx-call svg { width: 18px; height: 18px; }
+  .vx-call:active { transform: scale(0.92); }
+  .vx-call--none { background: none; border: none; }
+}

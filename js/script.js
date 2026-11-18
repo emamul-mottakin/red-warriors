@@ -15,6 +15,30 @@ if (window.gsap) {
   if (window.ScrollToPlugin) gsap.registerPlugin(ScrollToPlugin);
 }
 
+// Lite mode (set in <head>): low-end device / Data Saver / reduced motion -> skip the heavy extras
+const LITE = document.documentElement.classList.contains('lite');
+
+// ===== Smooth scrolling (Lenis, driven by the GSAP ticker so ScrollTrigger stays in sync) =====
+// Wheel/trackpad scrolling glides to a stop; touch keeps native momentum. Lite devices use native scroll.
+let lenis = null;
+if (
+  !LITE &&
+  window.Lenis &&
+  window.gsap &&
+  window.ScrollTrigger &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+) {
+  lenis = new Lenis({
+    duration: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    smoothWheel: true,
+    wheelMultiplier: 0.9,
+  });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+}
+
 // ===== Mobile menu: circular reveal from the toggle, links rise in one by one =====
 const navToggle = document.getElementById('navToggle');
 const mobileMenu = document.getElementById('mobileMenu');
@@ -51,6 +75,7 @@ function setMenu(open) {
   mobileMenu.setAttribute('aria-hidden', String(!open));
   document.getElementById('navbar').classList.toggle('menu-open', open);
   document.documentElement.style.overflow = open ? 'hidden' : '';
+  if (lenis) (open ? lenis.stop() : lenis.start());
 
   if (open) menuTl.timeScale(1).play();
   else menuTl.timeScale(1.35).reverse();
@@ -90,7 +115,7 @@ if (heroCarousel && window.gsap) {
 
   if (reduceMotion || slides.length < 2) {
     // no motion wanted: just show the first hero
-    gsap.set(slides[0], { opacity: 1, x: isCompact() ? -W() * 0.07 : 0 });
+    gsap.set(slides[1], { opacity: 1, x: isCompact() ? -W() * 0.07 : 0 });
   } else {
     const n = slides.length;
     const HOLD = 2.2; // seconds each hero stays sharp
@@ -102,24 +127,34 @@ if (heroCarousel && window.gsap) {
     const fgX = () => (isCompact() ? W() * 0.31 : W() * 0.2 + 30);
     const exitX = () => fgX() + W() * (isCompact() ? 0.6 : 0.35);
 
-    const FOCUS = { x: focusX, scale: 1, opacity: 1, filter: 'blur(0px) brightness(1)' };
+    // lite devices: no animated blur (the most expensive part of the swap); depth comes from opacity + scale
+    const F = (full, lite) => (LITE ? lite : full);
+    const FOCUS = { x: focusX, scale: 1, opacity: 1, filter: F('blur(0px) brightness(1)', 'none') };
     // smaller screens get a lighter blur and brightness drop so the foreground hero stays visible
     const FOREGROUND = {
       x: fgX,
       scale: 1.1,
-      opacity: 1,
-      filter: () => (isCompact() ? 'blur(7px) brightness(0.92)' : 'blur(12px) brightness(0.8)'),
+      opacity: F(1, 0.55),
+      filter: F(() => (isCompact() ? 'blur(7px) brightness(0.92)' : 'blur(12px) brightness(0.8)'), 'none'),
     };
-    const EXIT = { x: exitX, scale: 1.3, opacity: 0, filter: 'blur(22px) brightness(0.7)' };
+    const EXIT = { x: exitX, scale: 1.3, opacity: 0, filter: F('blur(22px) brightness(0.7)', 'none') };
     // where a new hero starts: tucked behind the focused one, smaller and out of focus
-    const BEHIND = { x: () => focusX() - W() * 0.05, scale: 0.88, opacity: 0, filter: 'blur(14px) brightness(0.6)' };
+    const BEHIND = { x: () => focusX() - W() * 0.05, scale: 0.88, opacity: 0, filter: F('blur(14px) brightness(0.6)', 'none') };
 
     gsap.set(slides, { ...BEHIND, zIndex: 0 });
 
-    let focusIndex = 0;
-    let fgIndex = -1; // nobody in the foreground until the first swap
+    // opening scene already has both heroes: Iron Man in sharp focus, Spider-Man blurred
+    // in the foreground (slide 0), so the rack-focus look is visible from the first second
+    let focusIndex = 1;
+    let fgIndex = 0;
 
-    // opening: the first hero emerges from behind into focus
+    gsap.set(slides[fgIndex], { zIndex: 3 });
+    gsap.fromTo(
+      slides[fgIndex],
+      { x: () => fgX() + W() * 0.18, scale: 1.3, opacity: 0, filter: F('blur(22px) brightness(0.7)', 'none') },
+      { ...FOREGROUND, duration: 1.2, ease: 'power3.out', delay: 0.25 }
+    );
+    // Iron Man emerges from behind into focus
     gsap.set(slides[focusIndex], { zIndex: 2 });
     gsap.to(slides[focusIndex], { ...FOCUS, duration: 1.1, ease: 'power3.out', delay: 0.3 });
 
@@ -206,7 +241,7 @@ const foodReveal = document.getElementById('foodReveal');
 const flyGlow = document.querySelector('.fly-glow');
 const flyFlash = document.getElementById('flyFlash');
 const flyBg = document.getElementById('flyBg');
-const flyVideo = document.getElementById('flyVideo');
+const flyImage = document.getElementById('flyImage');
 
 const isPhone = window.matchMedia('(max-width: 760px)').matches;
 
@@ -214,36 +249,35 @@ if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger)
   // anchor Iron Man (and his trail ghost) on their own center
   gsap.set([flyIronman, flyIronmanTrail].filter(Boolean), { xPercent: -50, yPercent: -50 });
 
+  // the flight happens while the food section slides up over the Arena: he crosses the middle
+  // when the section's top edge is around half-way up the screen, and is gone by the time it covers it
   const tl = gsap.timeline({
     scrollTrigger: {
       trigger: '#food',
-      start: 'top top',
-      end: 'bottom bottom',
+      start: 'top 92%',
+      end: 'top 6%',
       scrub: 0.6,
     },
   });
 
-  // the whole scene opens blurred, like it's still out of focus as it scrolls up
-  if (flyBg) {
-    // stays a soft bokeh backdrop throughout: opens heavily blurred, settles to a
-    // gentle depth-of-field blur rather than ever going fully sharp
-    gsap.set(flyBg, { filter: 'blur(32px)', scale: 1.08 });
-    tl.to(flyBg, { filter: 'blur(9px)', scale: 1, ease: 'power2.out', duration: 0.7 }, 0);
-  }
+  // he flies through the lower (food) part of the screen, drifting up as the section rises
+  gsap.set(flyIronman, { autoAlpha: 0 });
+  tl.set(flyIronman, { autoAlpha: 1 }, 0.001);
 
   // leg 1: swoops in from far right, banked, rising, with a squash as he "catches air"
   tl.fromTo(
     flyIronman,
-    { x: '150vw', y: '-9%', rotate: -12, scaleX: 0.8, scaleY: 0.98 },
-    { x: '8vw', y: '1%', rotate: 0, scaleX: 1.08, scaleY: 1.08, ease: 'power3.out', duration: 0.48 },
+    { x: '150vw', y: '24vh', rotate: -12, scaleX: 0.8, scaleY: 0.98 },
+    { x: '8vw', y: '15vh', rotate: 0, scaleX: 1.08, scaleY: 1.08, ease: 'power3.out', duration: 0.48 },
     0
   )
     // leg 2: banks the other way and stretches/accelerates off-screen, selling raw speed
     .to(
       flyIronman,
-      { x: '-62vw', y: '-4%', rotate: 8, scaleX: 1.32, scaleY: 0.82, ease: 'power4.in', duration: 0.52 },
+      { x: '-62vw', y: '6vh', rotate: 8, scaleX: 1.32, scaleY: 0.82, ease: 'power4.in', duration: 0.52 },
       0.48
     )
+    .set(flyIronman, { autoAlpha: 0 }, 1)
     // the food panel trails in behind him, slightly delayed, coming into focus as it lands
     .fromTo(
       foodReveal,
@@ -254,14 +288,15 @@ if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger)
 
   // a motion-blur ghost that lags slightly behind him, same path, offset in time
   if (flyIronmanTrail) {
+    gsap.set(flyIronmanTrail, { visibility: 'visible' });
     tl.fromTo(
       flyIronmanTrail,
-      { x: '150vw', y: '-9%', rotate: -12, scaleX: 0.8, scaleY: 0.98, opacity: 0 },
-      { x: '8vw', y: '1%', rotate: 0, scaleX: 1.08, scaleY: 1.08, opacity: 0.4, ease: 'power3.out', duration: 0.48 },
+      { x: '150vw', y: '24vh', rotate: -12, scaleX: 0.8, scaleY: 0.98, opacity: 0 },
+      { x: '8vw', y: '15vh', rotate: 0, scaleX: 1.08, scaleY: 1.08, opacity: 0.4, ease: 'power3.out', duration: 0.48 },
       0.045
     ).to(
       flyIronmanTrail,
-      { x: '-62vw', y: '-4%', rotate: 8, scaleX: 1.32, scaleY: 0.82, opacity: 0, ease: 'power4.in', duration: 0.52 },
+      { x: '-62vw', y: '6vh', rotate: 8, scaleX: 1.32, scaleY: 0.82, opacity: 0, ease: 'power4.in', duration: 0.52 },
       0.525
     );
   }
@@ -289,16 +324,61 @@ if (!isPhone && flyIronman && foodReveal && window.gsap && window.ScrollTrigger)
   }
 }
 
-// ===== Food video: play, then pause 3s on each loop before replaying =====
-if (flyVideo) {
-  flyVideo.play().catch(() => {});
+// ===== Food backdrop: Marvel image un-blurs and settles as the section scrolls in =====
+// Both blur levels are baked into the images (food-marvel-bg.webp = light blur,
+// food-marvel-bg-blur.webp = heavy blur). Scrolling just fades the heavy one out and
+// zooms both out: opacity + scale only, which the GPU handles cheaply on any device.
+const flyImageBlur = document.getElementById('flyImageBlur');
+if (flyImage && window.gsap && window.ScrollTrigger) {
+  const layers = [flyImage, flyImageBlur].filter(Boolean);
+  if (LITE) {
+    gsap.set(layers, { scale: 1.03 });
+    if (flyImageBlur) gsap.set(flyImageBlur, { opacity: 0 });
+  } else {
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#food',
+        start: 'top bottom',
+        // desktop/tablet: keeps settling through the pinned part; phone: done once it reaches the top
+        end: isPhone ? 'top top' : 'bottom bottom',
+        scrub: 0.8,
+      },
+    });
+    tl.fromTo(layers, { scale: 1.25 }, { scale: 1.03, ease: 'none' }, 0);
+    if (flyImageBlur) tl.fromTo(flyImageBlur, { opacity: 1 }, { opacity: 0, ease: 'power1.in' }, 0);
+  }
+}
 
-  flyVideo.addEventListener('ended', () => {
-    setTimeout(() => {
-      flyVideo.currentTime = 0;
-      flyVideo.play().catch(() => {});
-    }, 3000);
-  });
+// ===== Pause looping animations while their section is off screen =====
+// (spinning portal, mandala, breathing hero, pulsing dots…) so the device only animates what you see
+if ('IntersectionObserver' in window) {
+  const io = new IntersectionObserver(
+    (entries) => entries.forEach((e) => e.target.classList.toggle('anim-paused', !e.isIntersecting)),
+    { rootMargin: '100px 0px' }
+  );
+  document.querySelectorAll('#hero, #sports, #itinerary, #food').forEach((el) => io.observe(el));
+
+  // hero video: only decode frames while the hero is visible
+  const heroVideo = document.querySelector('.hero-video');
+  if (heroVideo) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) heroVideo.play().catch(() => {});
+        else heroVideo.pause();
+      });
+    }).observe(heroVideo);
+  }
+}
+
+// Hero video is attached only after the page has painted (poster shows instantly), and never on
+// lite devices, which keep the blurred poster frame and skip the 600 KB download completely
+{
+  const v = document.querySelector('.hero-video');
+  if (v && !LITE) {
+    v.querySelectorAll('source[data-src]').forEach((s) => { s.src = s.dataset.src; });
+    v.load();
+    v.play().catch(() => {});
+  }
 }
 
 // ===== Nav: smooth scroll to sections + highlight the section you're in =====
@@ -355,7 +435,16 @@ function goToSection(id) {
   if (target === null) return;
   setActiveNav(id);
 
-  if (window.gsap && window.ScrollToPlugin) {
+  if (lenis) {
+    const distance = Math.abs(window.scrollY - target);
+    navScrolling = true;
+    lenis.scrollTo(target, {
+      duration: Math.min(1.8, Math.max(0.9, distance / 2400)),
+      easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+      lock: true,
+      onComplete: () => { navScrolling = false; updateActiveNav(); },
+    });
+  } else if (window.gsap && window.ScrollToPlugin) {
     const distance = Math.abs(window.scrollY - target);
     navScrolling = true;
     gsap.to(window, {
@@ -394,7 +483,7 @@ window.addEventListener('load', () => { measureSections(); updateActiveNav(); })
   const btn = document.getElementById('playerMore');
   if (!grid || !btn) return;
   const TOTAL = 33, INITIAL = 12;
-  const imgs = ['spider-man.png', 'hulk.webp', 'thor.png', 'black-widow.png', 'captain-america.png', 'iron-man.png'];
+  const imgs = ['spider-man.webp', 'hulk.webp', 'thor.webp', 'black-widow.webp', 'captain-america.webp', 'iron-man.webp'];
   const frag = document.createDocumentFragment();
   for (let i = 0; i < TOTAL; i++) {
     const card = document.createElement('article');
@@ -415,7 +504,150 @@ window.addEventListener('load', () => { measureSections(); updateActiveNav(); })
   });
 })();
 
-// ===== Reveal on scroll for the itinerary, squad, rules and footer =====
+// ===== Itinerary: pinned horizontal "mission reel" =====
+// Desktop/tablet: the section pins and vertical scroll drives the cards sideways; the
+// mission clock, counter, progress rail and the glowing "active" card all follow along.
+// Phone: the same cards stack vertically and light up as they pass the middle of the screen.
+// (Created before the reveal triggers below, so those account for the pin's extra scroll space.)
+(function () {
+  const section = document.getElementById('itinerary');
+  const track = document.getElementById('itinTrack');
+  if (!section || !track || !window.gsap || !window.ScrollTrigger) return;
+
+  const cards = gsap.utils.toArray('.mission-card', track);
+  const stops = gsap.utils.toArray('.rail-stop', section);
+  const clock = document.getElementById('itinClock');
+  const count = document.getElementById('itinCount');
+  const fill = document.getElementById('itinRailFill');
+  const ghost = document.getElementById('itinGhost');
+  let current = -1;
+
+  function setCurrent(i) {
+    if (i === current || !cards[i]) return;
+    current = i;
+    cards.forEach((c, k) => c.classList.toggle('is-active', k === i));
+    stops.forEach((s, k) => {
+      s.classList.toggle('is-past', k < i);
+      s.classList.toggle('is-current', k === i);
+    });
+    if (count) count.textContent = String(i + 1).padStart(2, '0');
+    // Eye of Agamotto ring pulses each time the clock jumps to a new stop
+    const eye = clock && clock.closest('.itin-clock');
+    if (eye) {
+      eye.classList.remove('is-turning');
+      void eye.offsetWidth; // restart the CSS animation
+      eye.classList.add('is-turning');
+    }
+    if (clock) {
+      clock.textContent = cards[i].dataset.time;
+      gsap.fromTo(clock, { y: -12, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: 'power3.out', overwrite: true });
+    }
+  }
+
+  const mm = gsap.matchMedia();
+  mm.add(
+    // (matchMedia only runs this when at least one query matches, so phone needs its own)
+    { wide: '(min-width: 761px)', narrow: '(max-width: 760px)', reduce: '(prefers-reduced-motion: reduce)' },
+    (ctx) => {
+      const { wide, reduce } = ctx.conditions;
+      current = -1;
+
+      if (wide) {
+        const distance = () => Math.max(0, track.scrollWidth - window.innerWidth);
+        const indexAt = (p) => Math.round(p * (cards.length - 1));
+        // a little skew while the reel is moving fast, settling back when you stop
+        const skewTo = gsap.quickTo(track, 'skewX', { duration: 0.5, ease: 'power3.out' });
+
+        const tl = gsap.timeline({
+          scrollTrigger: {
+            id: 'itinPin',
+            trigger: section,
+            start: 'top top',
+            end: () => '+=' + distance(),
+            pin: true,
+            scrub: 0.8,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              setCurrent(indexAt(self.progress));
+              if (!reduce && !LITE) skewTo(gsap.utils.clamp(-5, 5, self.getVelocity() / -450));
+            },
+            onRefresh: (self) => setCurrent(indexAt(self.progress)),
+          },
+        });
+        tl.to(track, { x: () => -distance(), ease: 'none' }, 0);
+        if (fill) tl.to(fill, { scaleX: 1, ease: 'none' }, 0);
+        if (ghost) tl.to(ghost, { xPercent: -30, ease: 'none' }, 0);
+        // the Time Stone mandala turns as you move through the day (on top of its slow idle spin)
+        const mandala = document.getElementById('itinMandala');
+        if (mandala && !reduce) {
+          gsap.set(mandala, { xPercent: -50, yPercent: -50, x: 0, y: 0 });
+          tl.fromTo(mandala, { rotate: 0 }, { rotate: 220, ease: 'none' }, 0);
+        }
+
+        // cards rise into the reel one after another as the section arrives
+        if (!reduce) {
+          gsap.from(cards, {
+            y: '65vh',
+            rotate: 6,
+            duration: 1.1,
+            ease: 'power4.out',
+            stagger: 0.07,
+            clearProps: 'transform',
+            scrollTrigger: { trigger: section, start: 'top 70%', toggleActions: 'play none none none' },
+          });
+        }
+        setCurrent(0);
+      } else {
+        cards.forEach((card, k) => {
+          ScrollTrigger.create({
+            trigger: card,
+            start: 'top 60%',
+            end: 'bottom 40%',
+            onToggle: (self) => self.isActive && setCurrent(k),
+          });
+          if (!reduce) {
+            gsap.from(card, {
+              y: 60,
+              opacity: 0,
+              duration: 0.8,
+              ease: 'power3.out',
+              clearProps: 'transform,opacity',
+              scrollTrigger: { trigger: card, start: 'top 90%', once: true },
+            });
+          }
+        });
+      }
+    }
+  );
+})();
+
+// ===== Time Stone environment: scene above turns green as the Itinerary arrives; navbar follows =====
+if (window.gsap && window.ScrollTrigger && document.getElementById('itinerary')) {
+  const flyTint = document.getElementById('flyTint');
+  if (flyTint) {
+    gsap.to(flyTint, {
+      opacity: 1,
+      ease: 'none',
+      scrollTrigger: { trigger: '#itinerary', start: 'top bottom', end: 'top top', scrub: true },
+    });
+  }
+  // navbar switches theme as soon as the Itinerary reaches it, and back when it leaves
+  ScrollTrigger.create({
+    trigger: '#itinerary',
+    start: () => 'top ' + (navbar.offsetHeight || 70),
+    // when the section is pinned, its "bottom" only arrives after the whole sideways reel
+    end: () => {
+      const pin = ScrollTrigger.getById('itinPin');
+      const navH = navbar.offsetHeight || 70;
+      return pin ? pin.end + document.getElementById('itinerary').offsetHeight - navH : 'bottom ' + navH;
+    },
+    toggleClass: { targets: navbar, className: 'nav--timestone' },
+    invalidateOnRefresh: true,
+  });
+}
+
+// ===== Reveal on scroll for the squad, rules and footer =====
 if (window.gsap && window.ScrollTrigger) {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const reveals = gsap.utils.toArray('.reveal');
@@ -429,22 +661,38 @@ if (window.gsap && window.ScrollTrigger) {
         gsap.to(batch, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.09, overwrite: true }),
     });
   }
+}
 
-  // the timeline line fills in red as you scroll, and each stop lights up as the line reaches it
-  const timelineProgress = document.getElementById('timelineProgress');
-  if (timelineProgress) {
-    gsap.to(timelineProgress, {
-      scaleY: 1,
-      ease: 'none',
-      scrollTrigger: { trigger: '.timeline', start: 'top 65%', end: 'bottom 65%', scrub: 0.4 },
+// section tops shift once the itinerary pin adds its scroll space, so re-measure for the nav
+if (window.ScrollTrigger) {
+  ScrollTrigger.addEventListener('refresh', () => { measureSections(); updateActiveNav(); });
+}
+
+// ===== Pause sections that are covered by the next one =====
+// Hero, Arena and Food are sticky, so the browser still counts them as on screen while the next
+// section sits on top of them. Once a section is fully covered, its loops (and the hero video) stop.
+if (window.gsap && window.ScrollTrigger) {
+  const heroVideo = document.querySelector('.hero-video');
+  [
+    ['hero', 'sports'],
+    ['sports', 'food'],
+    ['food', 'itinerary'],
+    ['itinerary', 'team'],
+  ].forEach(([coveredId, coverId]) => {
+    const covered = document.getElementById(coveredId);
+    const cover = document.getElementById(coverId);
+    if (!covered || !cover) return;
+    ScrollTrigger.create({
+      trigger: cover,
+      start: 'top top',
+      end: 'max',
+      onToggle: (self) => {
+        covered.classList.toggle('anim-covered', self.isActive);
+        if (covered.id === 'hero' && heroVideo && heroVideo.currentSrc) {
+          if (self.isActive) heroVideo.pause();
+          else heroVideo.play().catch(() => {});
+        }
+      },
     });
-    gsap.utils.toArray('.timeline-item').forEach((item) => {
-      ScrollTrigger.create({
-        trigger: item,
-        start: 'top 65%',
-        onEnter: () => item.classList.add('is-lit'),
-        onLeaveBack: () => item.classList.remove('is-lit'),
-      });
-    });
-  }
+  });
 }
