@@ -42,7 +42,12 @@
       <a href="#sports">Sports</a>
       <a href="#food">Food</a>
       <a href="#itinerary">Itinerary</a>
-      <a href="#team">Squad</a>
+      <div class="nav-dd">
+        <a href="#team" class="nav-dd-toggle" aria-haspopup="true">Squad <svg class="nav-dd-caret" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg></a>
+        <div class="nav-dd-menu">
+          <a href="#birthday"><span aria-hidden="true">&#127874;</span> Birthday</a>
+        </div>
+      </div>
       <a href="#disclaimer">Rules</a>
       <a href="vehicles.html">Vehicles</a>
     </nav>
@@ -61,6 +66,7 @@
     <a href="#food"><span class="mm-inner"><span class="mm-num">03</span><span class="mm-label">Food</span></span></a>
     <a href="#itinerary"><span class="mm-inner"><span class="mm-num">04</span><span class="mm-label">Itinerary</span></span></a>
     <a href="#team"><span class="mm-inner"><span class="mm-num">05</span><span class="mm-label">Squad</span></span></a>
+    <a href="#birthday" class="mm-sub"><span class="mm-inner"><span class="mm-num">&#8627;</span><span class="mm-label">Birthday</span></span></a>
     <a href="#disclaimer"><span class="mm-inner"><span class="mm-num">06</span><span class="mm-label">Rules</span></span></a>
     <a href="vehicles.html"><span class="mm-inner"><span class="mm-num">07</span><span class="mm-label">Vehicles</span></span></a>
   </nav>
@@ -274,10 +280,114 @@
     </div>
 
     <div class="sport-block" id="shortgame">
-      <div class="coming-soon">
-        <span class="coming-soon-icon">&#127919;</span>
-        <h4>Rules Dropping Soon</h4>
-        <p>We're still finalizing the Short Game format. Check back closer to the event for the full rulebook.</p>
+      <div class="mg">
+        <div class="mg-tabs" role="tablist" aria-label="Short games">
+          <button class="mg-tab is-active" type="button" role="tab" aria-selected="true" data-game="game1">Game 1</button>
+          <button class="mg-tab" type="button" role="tab" aria-selected="false" data-game="game2">Game 2</button>
+          <span class="mg-tab-ink" aria-hidden="true"></span>
+        </div>
+
+        <!-- ===== GAME 1 ===== -->
+        <div class="mg-game is-active" id="game1" role="tabpanel">
+          <h4 class="mg-title">Infinity Stones Relay</h4>
+          <p class="mg-tagline">Race &bull; Pass &bull; Conquer</p>
+          <div class="mg-deck">
+            <button class="mg-nav mg-prev" type="button" aria-label="Previous card"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5m6-7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="mg-stack" aria-live="polite">
+              <article class="mg-card mg-card--setup">
+                <header class="mg-card-head" data-n="01"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2.4"/><circle cx="10" cy="12" r="2.4"/><circle cx="18" cy="18" r="2.4"/></svg></span><h5>Setup</h5><span class="mg-card-count">01 / 03</span></header>
+                <div class="mg-card-body">
+                  <div class="mg-chips"><span>4 teams</span><span>7 players each</span><span>7 boxes</span></div>
+                  <ul class="mg-list">
+                    <li>There are 4 teams of 7 players, each with its own lane.</li>
+                    <li>Each lane has 7 boxes in a row and a finish line after the last box.</li>
+                    <li>Each team gets the same large pile of bottles at its start line.</li>
+                  </ul>
+                </div>
+              </article>
+              <article class="mg-card mg-card--how">
+                <header class="mg-card-head" data-n="02"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg></span><h5>How to Play</h5><span class="mg-card-count">02 / 03</span></header>
+                <div class="mg-card-body">
+                  <ol class="mg-steps">
+                    <li>On &ldquo;Go!&rdquo;, Player 1 grabs bottles, runs to Box 1, stands them upright, runs back and tags Player 2.</li>
+                    <li>Players 2&ndash;6 do the same, filling one box each (Box 2 through Box 6).</li>
+                    <li>Player 7 takes the remaining bottles, runs past all 6 boxes and places them in Box 7.</li>
+                    <li>The team shouts &ldquo;Done!&rdquo; when Player 7 puts down the last bottle.</li>
+                  </ol>
+                </div>
+              </article>
+              <article class="mg-card mg-card--rules">
+                <header class="mg-card-head" data-n="03"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><h5>Rules</h5><span class="mg-card-count">03 / 03</span></header>
+                <div class="mg-card-body">
+                  <ul class="mg-list mg-list--rules">
+                    <li>Only one runner per team at a time. Wait for the tag before going.</li>
+                    <li>Bottles must stand upright. If a bottle falls in a box or beyond the finish line, stand it up again before leaving.</li>
+                    <li>Do not touch another team&rsquo;s boxes or bottles.</li>
+                  </ul>
+                </div>
+              </article>
+            </div>
+            <button class="mg-nav mg-next" type="button" aria-label="Next card"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="mg-dots" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <!-- ===== GAME 2 ===== -->
+        <div class="mg-game" id="game2" role="tabpanel" hidden>
+          <h4 class="mg-title">Marvel: 30 Seconds to Assemble</h4>
+          <p class="mg-tagline">Watch the scene &bull; Name the movie &bull; Name the hero</p>
+          <div class="mg-deck">
+            <button class="mg-nav mg-prev" type="button" aria-label="Previous card"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M20 12H5m6-7-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="mg-stack" aria-live="polite">
+              <article class="mg-card mg-card--setup">
+                <header class="mg-card-head" data-n="01"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2.4"/><circle cx="10" cy="12" r="2.4"/><circle cx="18" cy="18" r="2.4"/></svg></span><h5>Setup</h5><span class="mg-card-count">01 / 03</span></header>
+                <div class="mg-card-body">
+                  <div class="mg-chips"><span>4 teams</span><span>5 players each</span><span>30 sec scene</span></div>
+                  <ul class="mg-list">
+                    <li>There are 4 teams of 5 players each.</li>
+                    <li>Each team comes forward to watch a Marvel movie scene.</li>
+                    <li>Each scene plays for 30 seconds only.</li>
+                    <li>Teams must guess the movie name and the character name.</li>
+                  </ul>
+                </div>
+              </article>
+              <article class="mg-card mg-card--how">
+                <header class="mg-card-head" data-n="02"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M10 8.5v7l6-3.5z" fill="currentColor"/></svg></span><h5>How to Play</h5><span class="mg-card-count">02 / 03</span></header>
+                <div class="mg-card-body">
+                  <ol class="mg-steps">
+                    <li>On &ldquo;Go!&rdquo;, all 5 players of the first team come forward.</li>
+                    <li>A Marvel movie scene plays for 30 seconds.</li>
+                    <li>All 5 players can discuss the movie and character.</li>
+                    <li>After the scene ends, the team has 10 seconds to give its final answer.</li>
+                    <li>Each team gets only one chance to answer each scene.</li>
+                    <li>The same process continues for the remaining teams.</li>
+                  </ol>
+                </div>
+              </article>
+              <article class="mg-card mg-card--rules">
+                <header class="mg-card-head" data-n="03"><span class="mg-card-icon"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8.2-7 10-4-1.8-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><h5>Rules</h5><span class="mg-card-count">03 / 03</span></header>
+                <div class="mg-card-body">
+                  <ul class="mg-list mg-list--rules">
+                    <li>No mobile phones, internet searches or outside help.</li>
+                    <li>No hints or assistance from the audience or other teams.</li>
+                    <li>Scenes play only once. No replay or extra time.</li>
+                    <li>Once an answer is submitted, it cannot be changed.</li>
+                    <li>Answers after the time limit will not be accepted.</li>
+                    <li>Shouting answers or disturbing others may cause disqualification.</li>
+                    <li>Any cheating results in immediate disqualification.</li>
+                  </ul>
+                </div>
+              </article>
+            </div>
+            <button class="mg-nav mg-next" type="button" aria-label="Next card"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 12h15m-6-7 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            <div class="mg-dots" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <a class="mg-download" href="assets/docs/marvel-mini-games.pdf" download="Marvel-Mini-Games.pdf">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 20h16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download PDF
+        </a>
       </div>
     </div>
     </div>
@@ -304,40 +414,39 @@
       <p class="food-sub">Fast, filling, and ready before kickoff.</p>
 
       <div class="food-cards">
-        <!-- To add a photo: put <img decoding="async" class="food-photo-img" src="assets/images/food/..." alt="..."> inside .food-photo -->
         <article class="food-card">
           <div class="food-photo">
-            <div class="food-photo-placeholder" aria-hidden="true"><span>&#127859;</span>Photo coming soon</div>
+            <img decoding="async" loading="lazy" class="food-photo-img" src="assets/images/food/breakfast.webp" width="900" height="678" alt="Chicken soup with rumali roti and seasonal vegetables">
             <span class="food-meal">Breakfast</span>
             <span class="food-time">08:15 AM</span>
           </div>
           <div class="food-body">
             <span class="food-num" aria-hidden="true">01</span>
-            <h3 class="food-name">Paratha Power Plate</h3>
-            <p class="food-desc">Flaky, ghee-layered parathas with spiced egg bhurji, a side of fresh seasonal fruit and a hot cup of masala tea.</p>
+            <h3 class="food-name">Chicken Soup with Rumali Roti</h3>
+            <p class="food-desc">Silky-thin rumali roti with a warm, creamy chicken soup and a side of lightly spiced seasonal vegetables.</p>
             <ul class="food-tags">
-              <li>Whole wheat</li>
-              <li>Free-range eggs</li>
+              <li>Rumali roti</li>
+              <li>Chicken soup</li>
+              <li>Seasonal vegetables</li>
               <li>Green chilli</li>
-              <li>Pure ghee</li>
             </ul>
           </div>
         </article>
         <article class="food-card">
           <div class="food-photo">
-            <div class="food-photo-placeholder" aria-hidden="true"><span>&#127835;</span>Photo coming soon</div>
+            <img decoding="async" loading="lazy" class="food-photo-img" src="assets/images/food/lunch.webp" width="900" height="678" alt="Bangladeshi traditional platter with Najirshail rice, Mezbani beef, Mezbani dal and firni">
             <span class="food-meal">Lunch</span>
             <span class="food-time">01:00 PM</span>
           </div>
           <div class="food-body">
             <span class="food-num" aria-hidden="true">02</span>
-            <h3 class="food-name">Avengers Kacchi Biryani</h3>
-            <p class="food-desc">Slow-cooked basmati layered with tender chicken, saffron and crispy fried onions, served with cool raita and a cold drink.</p>
+            <h3 class="food-name">Bangladeshi Traditional Platter</h3>
+            <p class="food-desc">Fragrant Najirshail rice with Mezbani beef, Mezbani dal with goat head curry, fresh salad and a sweet firni to finish.</p>
             <ul class="food-tags">
-              <li>Basmati rice</li>
-              <li>Chicken</li>
-              <li>Saffron</li>
-              <li>Cucumber raita</li>
+              <li>Najirshail rice</li>
+              <li>Mezbani beef</li>
+              <li>Mezbani dal &amp; goat head</li>
+              <li>Firni</li>
             </ul>
           </div>
         </article>
@@ -535,29 +644,30 @@
       <p class="section-sub">Every hero has a role. Here's who keeps the Red Warriors running.</p>
     </header>
 
-    <div class="squad-lead">
-      <article class="squad-card squad-card--lead reveal">
-        <img decoding="async" src="assets/images/hero-carousel/captain-america.webp" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Team Owner</span>
-          <h3 class="squad-name">Captain America</h3>
-          <p class="squad-alias">Owner name coming soon</p>
-        </div>
-      </article>
-      <article class="squad-card squad-card--lead reveal">
-        <img decoding="async" src="assets/images/hero-carousel/iron-man.webp" alt="" loading="lazy">
-        <div class="squad-info">
-          <span class="squad-role">Team Manager</span>
-          <h3 class="squad-name">Iron Man</h3>
-          <p class="squad-alias">Manager name coming soon</p>
-        </div>
-      </article>
+    <!-- tabs: full roster / birthday squad (cards are rendered from js/script.js) -->
+    <div class="squad-tabs" role="tablist" aria-label="Squad">
+      <button class="squad-tab is-active" type="button" role="tab" id="tabSquad" aria-selected="true" aria-controls="squadPanel">The Squad <span class="squad-tab-count" id="squadCount"></span></button>
+      <button class="squad-tab" type="button" role="tab" id="tabBirthday" aria-selected="false" aria-controls="birthdayPanel"><span aria-hidden="true">&#127874;</span> Birthday Squad</button>
+      <span class="squad-tab-ink" aria-hidden="true"></span>
     </div>
 
-    <div class="squad-grid" id="playerGrid"></div>
+    <div class="squad-panel is-active" id="squadPanel" role="tabpanel" aria-labelledby="tabSquad">
+      <div class="squad-lead" id="squadLead"></div>
+      <div class="squad-grid" id="playerGrid"></div>
+      <div class="squad-more">
+        <button type="button" class="btn btn-primary" id="playerMore" aria-expanded="false">Show All Players</button>
+      </div>
+    </div>
 
-    <div class="squad-more">
-      <button type="button" class="btn btn-primary" id="playerMore" aria-expanded="false">Show All Players</button>
+    <div class="squad-panel" id="birthdayPanel" role="tabpanel" aria-labelledby="tabBirthday" hidden>
+      <div class="bday-banner">
+        <span class="bday-banner-icon" aria-hidden="true">&#127874;</span>
+        <div>
+          <h3 class="bday-banner-title">Birthday Squad</h3>
+          <p class="bday-banner-sub">Celebrating our birthday heroes at <b>04:30 PM</b> &mdash; cake, candles and a squad-sized cheer.</p>
+        </div>
+      </div>
+      <div class="squad-grid squad-grid--bday" id="birthdayGrid"></div>
     </div>
   </div>
 </section>
@@ -575,7 +685,7 @@
       <article class="rule-card reveal">
         <span class="rule-num">01</span>
         <h3>Be On Time</h3>
-        <p>We roll out at 07:30 AM sharp. Heroes don't keep the squad waiting.</p>
+        <p>Entry opens at 08:00 AM sharp. Heroes don't keep the squad waiting.</p>
       </article>
       <article class="rule-card reveal">
         <span class="rule-num">02</span>

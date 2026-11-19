@@ -223,8 +223,8 @@ sportTabs.forEach((tab) => {
     // cards rise in one after another, VS badges pop
     const next = document.getElementById(target);
     if (next && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.killTweensOf(next.querySelectorAll('.team-card, .vs-badge, .coming-soon'));
-      gsap.fromTo(next.querySelectorAll('.team-card, .coming-soon'),
+      gsap.killTweensOf(next.querySelectorAll('.team-card, .vs-badge, .mg > *'));
+      gsap.fromTo(next.querySelectorAll('.team-card, .mg > *:not([hidden])'),
         { y: 36, opacity: 0, scale: 0.94 },
         { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: 'power3.out', stagger: 0.07, clearProps: 'transform,opacity' });
       gsap.fromTo(next.querySelectorAll('.vs-badge'),
@@ -233,6 +233,167 @@ sportTabs.forEach((tab) => {
     }
   });
 });
+
+// ===== Arena height: when the content is taller than the screen, stick at the bottom edge instead of the top =====
+(function () {
+  const sec = document.getElementById('sports');
+  if (!sec) return;
+  let lastH = sec.offsetHeight;
+  let t;
+  function fit() {
+    const h = sec.offsetHeight;
+    sec.style.setProperty('--sports-top', Math.min(0, window.innerHeight - h) + 'px');
+    if (h !== lastH) {
+      lastH = h;
+      clearTimeout(t);
+      t = setTimeout(() => { if (window.ScrollTrigger) ScrollTrigger.refresh(); }, 200);
+    }
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(sec);
+  window.addEventListener('resize', fit);
+  fit();
+})();
+
+// ===== Short Game: Game 1 / Game 2 tabs + sticky-note card stacks =====
+(function () {
+  const mg = document.querySelector('.mg');
+  if (!mg || !window.gsap) return;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tabsWrap = mg.querySelector('.mg-tabs');
+  const tabs = [...mg.querySelectorAll('.mg-tab')];
+  const ink = mg.querySelector('.mg-tab-ink');
+  const games = [...mg.querySelectorAll('.mg-game')];
+
+  // slide the red ink under the active tab (re-measured when the Short Game panel becomes visible)
+  function moveInk() {
+    const a = tabs.find((t) => t.classList.contains('is-active'));
+    if (!a || !a.offsetWidth) return;
+    ink.style.width = a.offsetWidth + 'px';
+    ink.style.transform = 'translateX(' + a.offsetLeft + 'px)';
+    tabsWrap.classList.add('has-ink');
+  }
+  if ('ResizeObserver' in window) new ResizeObserver(moveInk).observe(tabsWrap);
+
+  // ---- one deck of stacked cards per game ----
+  function createDeck(game) {
+    const stack = game.querySelector('.mg-stack');
+    const cards = [...stack.querySelectorAll('.mg-card')];
+    const n = cards.length;
+    const dotsEl = game.querySelector('.mg-dots');
+    const dots = cards.map((_, i) => {
+      const d = document.createElement('span');
+      d.addEventListener('click', () => goTo(i));
+      dotsEl.appendChild(d);
+      return d;
+    });
+    let cur = 0;
+    let busy = false;
+    const dur = (s) => (reduce ? 0 : s);
+
+    const rest = (pos) => pos === 0
+      ? { x: 0, y: 0, rotation: 0, scale: 1, opacity: 1, zIndex: n }
+      : { x: pos % 2 ? 12 : -12, y: pos * 14, rotation: pos % 2 ? 3.5 : -3.5, scale: 1 - pos * 0.04, opacity: 1, zIndex: n - pos };
+    const posOf = (i) => (i - cur + n) % n;
+
+    function paintDots() { dots.forEach((d, i) => d.classList.toggle('is-on', i === cur)); }
+    function place(skip, d) {
+      cards.forEach((c, i) => { if (c !== skip) gsap.to(c, { ...rest(posOf(i)), duration: dur(d), ease: 'power3.out', overwrite: true }); });
+      paintDots();
+    }
+    function reset() { cur = 0; busy = false; cards.forEach((c, i) => gsap.set(c, rest(posOf(i)))); paintDots(); }
+
+    function next() {
+      if (busy || n < 2) return;
+      busy = true;
+      const leaving = cards[cur];
+      cur = (cur + 1) % n;
+      place(leaving, 0.5);
+      gsap.to(leaving, {
+        x: -stack.offsetWidth * 1.05, rotation: -14, opacity: 0, duration: dur(0.34), ease: 'power2.in', overwrite: true,
+        onComplete() {
+          gsap.set(leaving, rest(n - 1));
+          gsap.set(leaving, { opacity: 0 });
+          gsap.to(leaving, { opacity: 1, duration: dur(0.25) });
+          busy = false;
+        },
+      });
+    }
+    function prev() {
+      if (busy || n < 2) return;
+      busy = true;
+      cur = (cur - 1 + n) % n;
+      const incoming = cards[cur];
+      gsap.set(incoming, { x: -stack.offsetWidth * 1.05, y: 0, rotation: -14, scale: 1, opacity: 0, zIndex: n + 1 });
+      place(incoming, 0.5);
+      gsap.to(incoming, { ...rest(0), duration: dur(0.5), ease: 'power3.out', overwrite: true, onComplete() { busy = false; } });
+    }
+    function goTo(i) {
+      if (i === cur || busy) return;
+      const fwd = (i - cur + n) % n <= n / 2;
+      // step towards the target; with 3 cards this is at most two steps
+      const step = () => { if (cur === i) return; (fwd ? next : prev)(); setTimeout(step, reduce ? 0 : 420); };
+      step();
+    }
+
+    // swipe / drag the top card
+    let startX = null;
+    let dx = 0;
+    stack.addEventListener('pointerdown', (e) => {
+      if (busy || e.button > 0) return;
+      startX = e.clientX; dx = 0;
+      stack.setPointerCapture(e.pointerId);
+    });
+    stack.addEventListener('pointermove', (e) => {
+      if (startX === null) return;
+      dx = e.clientX - startX;
+      gsap.set(cards[cur], { x: dx, rotation: dx / 16 });
+    });
+    const release = () => {
+      if (startX === null) return;
+      startX = null;
+      if (dx < -70) next();
+      else if (dx > 70) prev();
+      else gsap.to(cards[cur], { x: 0, rotation: 0, duration: dur(0.4), ease: 'back.out(2)' });
+      dx = 0;
+    };
+    stack.addEventListener('pointerup', release);
+    stack.addEventListener('pointercancel', release);
+
+    stack.tabIndex = 0;
+    stack.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+    });
+    game.querySelector('.mg-next').addEventListener('click', next);
+    game.querySelector('.mg-prev').addEventListener('click', prev);
+
+    reset();
+    return { reset };
+  }
+  const decks = {};
+  games.forEach((g) => { decks[g.id] = createDeck(g); });
+
+  // ---- Game 1 / Game 2 ----
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      if (tab.classList.contains('is-active')) return;
+      tabs.forEach((t) => {
+        t.classList.toggle('is-active', t === tab);
+        t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+      });
+      moveInk();
+      games.forEach((g) => { g.hidden = g.id !== tab.dataset.game; });
+      const g = document.getElementById(tab.dataset.game);
+      decks[g.id].reset();
+      if (!reduce) {
+        gsap.killTweensOf(g);
+        gsap.fromTo(g, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', clearProps: 'transform,opacity' });
+        const cs = g.querySelectorAll('.mg-card');
+        gsap.from(cs, { y: 40, opacity: 0, duration: 0.55, ease: 'power3.out', stagger: 0.09, delay: 0.05 });
+      }
+    });
+  });
+})();
 
 // ===== Fly transition (Iron Man flies right-to-left into Food) =====
 const flyIronman = document.getElementById('flyIronman');
@@ -464,6 +625,14 @@ function goToSection(id) {
 document.querySelectorAll('a[href^="#"]').forEach((link) => {
   link.addEventListener('click', (e) => {
     const id = link.getAttribute('href').slice(1);
+    // "Birthday" (nav dropdown / mobile menu): open the Birthday tab, then glide to the Squad section
+    if (id === 'birthday') {
+      e.preventDefault();
+      if (menuOpen) setMenu(false);
+      setSquadTab('birthday');
+      goToSection('team');
+      return;
+    }
     if (!document.getElementById(id)) return;
     e.preventDefault();
     if (menuOpen) setMenu(false);
@@ -477,32 +646,141 @@ window.addEventListener('scroll', updateActiveNav, { passive: true });
 window.addEventListener('resize', () => { measureSections(); updateActiveNav(); });
 window.addEventListener('load', () => { measureSections(); updateActiveNav(); });
 
-// ===== Squad players: render 33 cards, show 12 first, rest on "show more" =====
+// ===== Squad: player cards from player.xlsx + Squad / Birthday tabs =====
+// [name, role, photo]. Photos are the official ones from the company portal.
+const PLAYERS = [
+  ['Sayeed Ahmed', 'Team Owner', 'https://outing.indesore.com/img/man/33.png?v=1760442973'],
+  ['Kabir Ahmed', 'Team Manager', 'https://outing.indesore.com/img/man/35.png?v=1760439754'],
+  ['Emamul Mottakin', 'Player', 'https://outing.indesore.com/img/man/219.png?v=1784182457'],
+  ['Farzana Rahman Munia', 'Player', 'https://outing.indesore.com/img/man/42.png?v=1760443125'],
+  ['Md. Arif Hossain', 'Player', 'https://outing.indesore.com/img/man/112.png?v=1762923089'],
+  ['Mohammad Asiful Mowla', 'Player', 'https://outing.indesore.com/img/man/227.png?v=1784182889'],
+  ['Md. Abu Sayem', 'Player', 'https://outing.indesore.com/img/man/266.png?v=1784183087'],
+  ['Ariful Haque', 'Player', 'https://outing.indesore.com/img/man/222.png?v=1784182659'],
+  ['Aulad Hossain Roney', 'Player', 'https://outing.indesore.com/img/man/214.png?v=1784182030'],
+  ['Sajidur Rahman Sajid', 'Player', 'https://outing.indesore.com/img/man/62.png?v=1760443647'],
+  ['Jahangir Alam', 'Player', 'https://outing.indesore.com/img/man/43.png?v=1760443138'],
+  ['Manirul Hoque', 'Player', 'https://outing.indesore.com/img/man/45.png?v=1760443171'],
+  ['Marzan Hossain', 'Player', 'https://outing.indesore.com/img/man/46.png?v=1760443190'],
+  ['Md. Abdur Zaher', 'Player', 'https://outing.indesore.com/img/man/226.png?v=1784182833'],
+  ['Md. Alamin', 'Player', 'https://outing.indesore.com/img/man/289.png?v=1786861321'],
+  ['Md. Golam Mustafa Bhuiyan Dipu', 'Player', 'https://outing.indesore.com/img/man/213.png?v=1784181986'],
+  ['Md. Jahangir Hossain', 'Player', 'https://outing.indesore.com/img/man/51.png?v=1760443317'],
+  ['Md. Masum Mia', 'Player', ''],
+  ['Md. Monir Hossain', 'Player', 'https://outing.indesore.com/img/man/288.png?v=1786861228'],
+  ['Md. Nazmul Huda', 'Player', 'https://outing.indesore.com/img/man/228.png?v=1784183020'],
+  ['Md. Shariful Islam', 'Player', 'https://outing.indesore.com/img/man/212.png?v=1784185565'],
+  ['Md. Shehanul Islam', 'Player', 'https://outing.indesore.com/img/man/297.png?v=1792653008'],
+  ['Md. Zamir Mia', 'Player', 'https://outing.indesore.com/img/man/218.png?v=1784182187'],
+  ['Mehedi Hasan Rajon', 'Player', 'https://outing.indesore.com/img/man/223.png?v=1784182687'],
+  ['Mirza Edrisur Rahman', 'Player', 'https://outing.indesore.com/img/man/209.png?v=1784181868'],
+  ['Mizanur Rahman', 'Player', ''],
+  ['Nasir Uddin', 'Player', 'https://outing.indesore.com/img/man/202.png?v=1784181361'],
+  ['Progga Paromita Saha', 'Player', 'https://outing.indesore.com/img/man/276.png?v=1784184136'],
+  ['S M Bacchu', 'Player', 'https://outing.indesore.com/img/man/207.png?v=1784181751'],
+  ['Sharif Kamrul Islam', 'Player', 'https://outing.indesore.com/img/man/211.png?v=1784181924'],
+  ['Sweety Akter', 'Player', 'https://erp.indesore.com/img/u/482.png'],
+  ['Upoma Roy', 'Player', 'https://erp.indesore.com/img/u/770.png'],
+];
+// Birthday squad, in date order: [name, birthday label, photo]
+const BIRTHDAY = [
+  ['Md. Arif Hossain', '5 November', 'https://outing.indesore.com/img/man/206.png?v=1784181664'],
+  ['Sajidur Rahman Sajid', '10 November', 'https://outing.indesore.com/img/man/208.png?v=1784181788'],
+  ['Md. Moniruzzaman', '24 November', 'https://outing.indesore.com/img/man/249.png?v=1782124848'],
+  ['Md. Jahangir Hossain', '29 November', 'https://outing.indesore.com/img/man/51.png?v=1760443317'],
+];
+
+function initials(name) {
+  return name.replace(/^(Md\.|Mohammad|Muhammad)\s+/i, '').split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+function playerCard([name, role, photo], { lead = false, bday = false, hidden = false } = {}) {
+  const card = document.createElement('article');
+  card.className = 'pcard' + (lead ? ' pcard--lead' : '') + (bday ? ' pcard--bday' : '');
+  if (hidden) card.hidden = true;
+  const pic = photo
+    ? `<img src="${escapeHtml(photo)}" alt="${escapeHtml(name)}" width="300" height="388" loading="lazy" decoding="async" referrerpolicy="no-referrer">`
+    : `<span class="pcard-initials" aria-hidden="true">${escapeHtml(initials(name))}</span>`;
+  card.innerHTML = `
+    <div class="pcard-photo">${pic}${bday ? '<span class="pcard-cake" aria-hidden="true">&#127874;</span>' : ''}</div>
+    <div class="pcard-info">
+      <span class="pcard-role">${escapeHtml(role)}</span>
+      <h3 class="pcard-name">${escapeHtml(name)}</h3>
+    </div>`;
+  // a photo that fails to load falls back to initials
+  const img = card.querySelector('img');
+  if (img) img.addEventListener('error', () => { img.replaceWith(Object.assign(document.createElement('span'), { className: 'pcard-initials', textContent: initials(name) })); }, { once: true });
+  return card;
+}
+
 (function () {
+  const leadBox = document.getElementById('squadLead');
   const grid = document.getElementById('playerGrid');
   const btn = document.getElementById('playerMore');
-  if (!grid || !btn) return;
-  const TOTAL = 33, INITIAL = 12;
-  const imgs = ['spider-man.webp', 'hulk.webp', 'thor.webp', 'black-widow.webp', 'captain-america.webp', 'iron-man.webp'];
-  const frag = document.createDocumentFragment();
-  for (let i = 0; i < TOTAL; i++) {
-    const card = document.createElement('article');
-    card.className = 'squad-card';
-    if (i >= INITIAL) card.hidden = true;
-    card.innerHTML =
-      '<img src="assets/images/hero-carousel/' + imgs[i % imgs.length] + '" alt="" loading="lazy">' +
-      '<div class="squad-info"><span class="squad-role">Player</span>' +
-      '<h3 class="squad-name">Player ' + String(i + 1).padStart(2, '0') + '</h3>' +
-      '<p class="squad-alias">Player name coming soon</p></div>';
-    frag.appendChild(card);
-  }
-  grid.appendChild(frag);
-  btn.addEventListener('click', () => {
-    grid.querySelectorAll('.squad-card[hidden]').forEach((c) => { c.hidden = false; });
-    btn.parentElement.hidden = true;
-    btn.setAttribute('aria-expanded', 'true');
+  if (!grid || !leadBox) return;
+
+  const leads = PLAYERS.filter((p) => p[1] !== 'Player');
+  const players = PLAYERS.filter((p) => p[1] === 'Player');
+  const INITIAL = window.matchMedia('(max-width: 760px)').matches ? 8 : 15;
+
+  leads.forEach((p) => { const c = playerCard(p, { lead: true }); c.classList.add('reveal'); leadBox.appendChild(c); });
+  players.forEach((p, i) => {
+    const c = playerCard(p, { hidden: i >= INITIAL });
+    if (i < INITIAL) c.classList.add('reveal');
+    grid.appendChild(c);
   });
+  const count = document.getElementById('squadCount');
+  if (count) count.textContent = PLAYERS.length;
+
+  if (btn) {
+    if (players.length <= INITIAL) btn.parentElement.hidden = true;
+    btn.addEventListener('click', () => {
+      const shown = Array.from(grid.querySelectorAll('.pcard[hidden]'));
+      shown.forEach((c) => { c.hidden = false; });
+      btn.parentElement.hidden = true;
+      btn.setAttribute('aria-expanded', 'true');
+      if (window.gsap && !LITE) gsap.from(shown, { y: 30, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.03, clearProps: 'transform,opacity' });
+      if (window.ScrollTrigger) ScrollTrigger.refresh();
+    });
+  }
+
+  // birthday panel
+  const bgrid = document.getElementById('birthdayGrid');
+  if (bgrid) {
+    if (BIRTHDAY.length) BIRTHDAY.forEach((p) => bgrid.appendChild(playerCard(p, { bday: true })));
+    else bgrid.innerHTML = '<p class="bday-empty">Birthday heroes will be announced soon.</p>';
+  }
 })();
+
+// tabs (also opened from the nav "Birthday" link)
+const squadTabs = Array.from(document.querySelectorAll('.squad-tab'));
+function setSquadTab(which) {
+  squadTabs.forEach((t) => {
+    const on = t.id === (which === 'birthday' ? 'tabBirthday' : 'tabSquad');
+    t.classList.toggle('is-active', on);
+    t.setAttribute('aria-selected', String(on));
+    const panel = document.getElementById(t.getAttribute('aria-controls'));
+    if (panel) { panel.hidden = !on; panel.classList.toggle('is-active', on); }
+  });
+  const ink = document.querySelector('.squad-tab-ink');
+  const active = squadTabs.find((t) => t.classList.contains('is-active'));
+  if (ink && active) { ink.style.width = active.offsetWidth + 'px'; ink.style.transform = `translateX(${active.offsetLeft}px)`; }
+  const panel = document.querySelector('.squad-panel.is-active');
+  if (panel && window.gsap && !LITE) {
+    gsap.fromTo(panel.querySelectorAll('.pcard:not([hidden]), .bday-banner, .bday-empty'),
+      { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.025, clearProps: 'transform,opacity' });
+  }
+  if (window.ScrollTrigger) ScrollTrigger.refresh();
+}
+squadTabs.forEach((t) => t.addEventListener('click', () => setSquadTab(t.id === 'tabBirthday' ? 'birthday' : 'squad')));
+window.addEventListener('load', () => setSquadTab(location.hash === '#birthday' ? 'birthday' : 'squad'));
+window.addEventListener('resize', () => {
+  const ink = document.querySelector('.squad-tab-ink');
+  const active = squadTabs.find((t) => t.classList.contains('is-active'));
+  if (ink && active) { ink.style.width = active.offsetWidth + 'px'; ink.style.transform = `translateX(${active.offsetLeft}px)`; }
+});
 
 // ===== Itinerary: pinned horizontal "mission reel" =====
 // Desktop/tablet: the section pins and vertical scroll drives the cards sideways; the
